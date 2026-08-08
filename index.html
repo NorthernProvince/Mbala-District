@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>📋 MBALA Education Data · Entry</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+    body {
+      background: #f0f4fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    .app-container {
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 36px 36px 24px 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    .app-header {
+      background: #1a2b4a;
+      padding: 16px 18px 12px 18px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2c3e5e;
+    }
+    .app-header h1 {
+      font-size: 17px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-header h1 i { color: #ffcd3c; font-size: 20px; }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .header-actions .admin-badge {
+      background: #2a3f62;
+      padding: 5px 14px;
+      border-radius: 40px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #b8d0f0;
+      border: 1px solid #3b557a;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-actions .admin-badge:hover { background: #3b557a; }
+    .header-actions .admin-badge i { font-size: 12px; }
+    .app-content { padding: 16px 14px 20px; background: white; }
+    /* tabs inside content */
+    .tabs {
+      display: flex;
+      background: #eef2f7;
+      border-radius: 40px;
+      padding: 4px;
+      margin-bottom: 18px;
+      border: 1px solid #dce2ec;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 9px 6px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 12px;
+      color: #3a4b66;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .tab.active { background: #1a2b4a; color: white; box-shadow: 0 4px 8px rgba(0,20,40,0.15); }
+    .section { display: block; }
+    .section.hidden { display: none; }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0b1a30;
+      margin-bottom: 14px;
+      border-left: 4px solid #1a2b4a;
+      padding-left: 12px;
+    }
+    .form-grid { display: flex; flex-direction: column; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 3px; }
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2c405e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field label i { color: #1a2b4a; width: 16px; font-size: 13px; }
+    .field input, .field select {
+      background: #f8faff;
+      border: 1px solid #d7dfe9;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      color: #1e2f47;
+    }
+    .field input:focus, .field select:focus { border-color: #1a2b4a; background: white; box-shadow: 0 0 0 3px rgba(26,43,74,0.08); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn {
+      background: #1a2b4a;
+      border: none;
+      padding: 14px 18px;
+      border-radius: 60px;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid #2a3f62;
+    }
+    .btn:active { transform: scale(0.97); background: #12223a; }
+    .btn-success { background: #0f7b3a; border-color: #0f7b3a; }
+    .btn-outline { background: transparent; border: 2px solid #1a2b4a; color: #1a2b4a; }
+    .btn-danger { background: #b03a2e; border-color: #b03a2e; }
+    .toast {
+      background: #1e2f47;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 60px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 14px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .toast i { color: #ffcd3c; }
+    .footer-note {
+      font-size: 11px;
+      color: #7a8fa8;
+      text-align: center;
+      margin-top: 14px;
+      border-top: 1px solid #e5ebf3;
+      padding-top: 14px;
+    }
+    .admin-login-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .admin-login-area input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 40px;
+      border: 1px solid #d7dfe9;
+      background: #f8faff;
+      outline: none;
+    }
+    .admin-login-area input:focus { border-color: #1a2b4a; }
+    .admin-list {
+      max-height: 460px;
+      overflow-y: auto;
+      background: #f8faff;
+      border-radius: 20px;
+      padding: 8px 4px;
+      border: 1px solid #e5ebf3;
+    }
+    .admin-item {
+      background: white;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 1px solid #e5ebf3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .admin-item .top-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #0b1a30;
+    }
+    .admin-item .top-row .school-type {
+      font-size: 11px;
+      background: #eef2f7;
+      padding: 2px 10px;
+      border-radius: 40px;
+      font-weight: 500;
+    }
+    .admin-item .details {
+      font-size: 12px;
+      color: #3a4b66;
+      margin-top: 6px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+    .admin-item .timestamp {
+      font-size: 10px;
+      color: #7a8fa8;
+      margin-top: 6px;
+      border-top: 1px solid #f0f4fa;
+      padding-top: 4px;
+    }
+    .admin-actions { display: flex; gap: 8px; margin: 10px 0 6px; flex-wrap: wrap; }
+    .admin-actions .btn { width: auto; padding: 8px 18px; font-size: 13px; margin: 0; flex:1; min-width:80px; }
+    @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="app-container" id="app">
+  <!-- header with admin button -->
+  <div class="app-header">
+    <h1><i class="fas fa-graduation-cap"></i> MBALA 2025</h1>
+    <div class="header-actions">
+      <span class="admin-badge" id="adminHeaderBtn"><i class="fas fa-user-shield"></i> Admin</span>
+    </div>
+  </div>
+  <div class="app-content">
+    <!-- tabs: Primary / Secondary -->
+    <div class="tabs" id="tabContainer">
+      <button class="tab active" data-tab="primaryTab"><i class="fas fa-chalkboard-teacher"></i> Primary</button>
+      <button class="tab" data-tab="secondaryTab"><i class="fas fa-school"></i> Secondary</button>
+    </div>
+
+    <!-- ============ PRIMARY ENTRY ============ -->
+    <div id="primaryTab" class="section">
+      <div class="section-title"><i class="fas fa-edit"></i> Primary school data</div>
+      <div class="form-grid" id="primaryForm">
+        <div class="field"><label><i class="fas fa-tag"></i> School name</label><input type="text" id="priName" placeholder="e.g. Mbala Central" value=""></div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
+            <select id="priStatus"><option value="Urban">Urban</option><option value="Rural" selected>Rural</option><option value="Remote">Remote</option></select>
+          </div>
+          <div class="field"><label><i class="fas fa-road"></i> Dist (km)</label><input type="number" id="priDist" value="12"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="priEmis" value="EMIS-001"></div>
+          <div class="field"><label><i class="fas fa-home"></i> Staff houses</label><input type="number" id="priHouses" value="6"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-door-open"></i> Classrooms (perm)</label><input type="number" id="priClassPerm" value="8"></div>
+          <div class="field"><label><i class="fas fa-door-closed"></i> Classrooms (temp)</label><input type="number" id="priClassTemp" value="2"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-chair"></i> Desks avail</label><input type="number" id="priDesks" value="120"></div>
+          <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="priDeskShort" value="15"></div>
+        </div>
+        <div class="section-title" style="font-size:13px; margin-top:4px;"><i class="fas fa-users"></i> Enrolment (Boys/Girls)</div>
+        <div class="row-2">
+          <div class="field"><label>Grade 1</label><input type="text" id="priG1" value="30/28"></div>
+          <div class="field"><label>Grade 2-7</label><input type="text" id="priG2_7" value="120/115"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label>Grade 8-9</label><input type="text" id="priG8_9" value="45/40"></div>
+          <div class="field"><label>ECE L1+L2</label><input type="text" id="priEce" value="22/20"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-user-tie"></i> Male teachers</label><input type="number" id="priMale" value="12"></div>
+          <div class="field"><label><i class="fas fa-user-tie"></i> Female teachers</label><input type="number" id="priFemale" value="8"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-laptop"></i> Computers func</label><input type="number" id="priCompFunc" value="6"></div>
+          <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="priCompDys" value="2"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-bolt"></i> Power</label>
+            <select id="priPower"><option value="HEP">HEP</option><option value="Solar">Solar</option><option value="Non">Non</option></select>
+          </div>
+          <div class="field"><label><i class="fas fa-tint"></i> Water</label>
+            <select id="priWater"><option value="Piped">Piped</option><option value="Borehole">Borehole</option><option value="Well">Well</option><option value="Stream">Stream</option></select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-restroom"></i> VIP latrines</label><input type="number" id="priVip" value="8"></div>
+          <div class="field"><label><i class="fas fa-restroom"></i> Pit latrines</label><input type="number" id="priPit" value="4"></div>
+        </div>
+        <div class="field"><label><i class="fas fa-signal"></i> Mobile network</label>
+          <select id="priMobile"><option value="Airtel,MTN,Zamtel">Airtel, MTN, Zamtel</option><option value="Airtel">Airtel</option><option value="MTN">MTN</option><option value="Zamtel">Zamtel</option></select>
+        </div>
+        <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher sample</label><input type="text" id="priTeacherSample" placeholder="Name – role" value="Mwansa K. – HEADTEACHER"></div>
+        <button class="btn btn-success" data-type="primary"><i class="fas fa-cloud-upload-alt"></i> Submit Primary</button>
+      </div>
+    </div>
+
+    <!-- ============ SECONDARY ENTRY ============ -->
+    <div id="secondaryTab" class="section hidden">
+      <div class="section-title"><i class="fas fa-school"></i> Secondary school data</div>
+      <div class="form-grid" id="secondaryForm">
+        <div class="field"><label><i class="fas fa-tag"></i> School name</label><input type="text" id="secName" placeholder="e.g. Mbala Secondary" value=""></div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
+            <select id="secStatus"><option value="Urban">Urban</option><option value="Rural" selected>Rural</option><option value="Remote">Remote</option></select>
+          </div>
+          <div class="field"><label><i class="fas fa-road"></i> Dist (km)</label><input type="number" id="secDist" value="8"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="secEmis" value="EMIS-201"></div>
+          <div class="field"><label><i class="fas fa-home"></i> Staff houses</label><input type="number" id="secHouses" value="10"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-door-open"></i> Classrooms (perm)</label><input type="number" id="secClassPerm" value="12"></div>
+          <div class="field"><label><i class="fas fa-door-closed"></i> Classrooms (temp)</label><input type="number" id="secClassTemp" value="1"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-chair"></i> Desks avail</label><input type="number" id="secDesks" value="200"></div>
+          <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="secDeskShort" value="22"></div>
+        </div>
+        <div class="section-title" style="font-size:13px; margin-top:4px;"><i class="fas fa-users"></i> Enrolment (Boys/Girls)</div>
+        <div class="row-2">
+          <div class="field"><label>Form 1</label><input type="text" id="secF1" value="60/55"></div>
+          <div class="field"><label>Grade 9</label><input type="text" id="secG9" value="50/48"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label>Grade 10-12</label><input type="text" id="secG10_12" value="90/85"></div>
+          <div class="field"><label>Teachers (M/F)</label><input type="text" id="secTeachersMF" value="14/6"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-laptop"></i> Computers func</label><input type="number" id="secCompFunc" value="15"></div>
+          <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="secCompDys" value="3"></div>
+        </div>
+        <div class="field"><label><i class="fas fa-tint"></i> Water source</label>
+          <select id="secWater"><option value="Piped">Piped</option><option value="Borehole" selected>Borehole</option><option value="Well">Well</option><option value="Stream">Stream</option></select>
+        </div>
+        <div class="row-2">
+          <div class="field"><label><i class="fas fa-restroom"></i> VIP latrines</label><input type="number" id="secVip" value="12"></div>
+          <div class="field"><label><i class="fas fa-restroom"></i> Pit latrines</label><input type="number" id="secPit" value="6"></div>
+        </div>
+        <div class="field"><label><i class="fas fa-signal"></i> Mobile network</label>
+          <select id="secMobile"><option value="Airtel,MTN,Zamtel">Airtel, MTN, Zamtel</option><option value="MTN">MTN</option><option value="Zamtel">Zamtel</option></select>
+        </div>
+        <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher sample</label><input type="text" id="secTeacherSample" placeholder="Name – role" value="B. Chanda – Maths/Physics"></div>
+        <button class="btn btn-success" data-type="secondary"><i class="fas fa-cloud-upload-alt"></i> Submit Secondary</button>
+      </div>
+    </div>
+
+    <!-- Toast message -->
+    <div id="globalToast" class="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Saved!</span></div>
+    <div class="footer-note"><i class="fas fa-database"></i> Supabase · MBALA 2025</div>
+  </div>
+
+  <!-- ============ ADMIN OVERLAY (hidden by default) ============ -->
+  <div id="adminPanel" style="display:none; background:white; padding:16px 14px 20px; border-top:2px solid #1a2b4a;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span class="section-title" style="margin:0;"><i class="fas fa-database"></i> Admin Dashboard</span>
+      <button id="closeAdminBtn" class="btn" style="width:auto; padding:6px 16px; margin:0; font-size:13px; background:#b03a2e; border-color:#b03a2e;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-login-area">
+      <input type="password" id="adminPass" placeholder="Admin password">
+      <button id="adminLoginBtn" class="btn" style="width:auto; padding:8px 18px; margin:0;"><i class="fas fa-sign-in-alt"></i></button>
+    </div>
+    <div id="adminContent" style="display:none;">
+      <div class="admin-actions">
+        <button id="refreshAdminBtn" class="btn btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <button id="exportAdminCsvBtn" class="btn" style="background:#1a2b4a;"><i class="fas fa-file-export"></i> CSV</button>
+      </div>
+      <div id="adminList" class="admin-list">
+        <p style="color:#7a8fa8; text-align:center; padding:20px 0;">Login to view data</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- SUPABASE CONFIG ----------
+    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';        // <-- CHANGE
+    const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';                     // <-- CHANGE
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const TABLE_NAME = 'schools_data';
+
+    // ---------- DOM refs ----------
+    const primaryTab = document.getElementById('primaryTab');
+    const secondaryTab = document.getElementById('secondaryTab');
+    const tabBtns = document.querySelectorAll('.tab');
+    const adminHeaderBtn = document.getElementById('adminHeaderBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const closeAdminBtn = document.getElementById('closeAdminBtn');
+    const adminPassInput = document.getElementById('adminPass');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminContent = document.getElementById('adminContent');
+    const adminList = document.getElementById('adminList');
+    const refreshBtn = document.getElementById('refreshAdminBtn');
+    const exportCsvBtn = document.getElementById('exportAdminCsvBtn');
+    const toastDiv = document.getElementById('globalToast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // ---------- TAB SWITCH ----------
+    function switchTab(tabId) {
+      tabBtns.forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+      if (tabId === 'primaryTab') {
+        primaryTab.classList.remove('hidden');
+        secondaryTab.classList.add('hidden');
+      } else {
+        secondaryTab.classList.remove('hidden');
+        primaryTab.classList.add('hidden');
+      }
+    }
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        switchTab(this.dataset.tab);
+      });
+    });
+
+    // ---------- ADMIN PANEL TOGGLE ----------
+    adminHeaderBtn.addEventListener('click', function() {
+      if (adminPanel.style.display === 'none') {
+        adminPanel.style.display = 'block';
+        // if already logged in, show content
+        if (sessionStorage.getItem('adminLogged') === 'true') {
+          adminContent.style.display = 'block';
+          loadAdminData();
+        } else {
+          adminContent.style.display = 'none';
+          adminList.innerHTML = '<p style="color:#7a8fa8; text-align:center; padding:20px 0;">🔐 Please login</p>';
+        }
+      } else {
+        adminPanel.style.display = 'none';
+      }
+    });
+    closeAdminBtn.addEventListener('click', function() {
+      adminPanel.style.display = 'none';
+    });
+
+    // ---------- ADMIN LOGIN ----------
+    const ADMIN_PASSWORD = 'mbala2025';
+    adminLoginBtn.addEventListener('click', function() {
+      const pass = adminPassInput.value.trim();
+      if (pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminLogged', 'true');
+        adminContent.style.display = 'block';
+        adminList.innerHTML = '<p style="color:#7a8fa8; text-align:center; padding:20px 0;">Loading...</p>';
+        loadAdminData();
+        showToast('✅ Admin access granted');
+        adminPassInput.value = '';
+      } else {
+        alert('❌ Incorrect password');
+        adminPassInput.value = '';
+        adminPassInput.focus();
+      }
+    });
+    adminPassInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') adminLoginBtn.click(); });
+
+    // ---------- LOAD ADMIN DATA ----------
+    async function loadAdminData() {
+      try {
+        const { data, error } = await supabase
+          .from(TABLE_NAME)
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        if (!data || data.length === 0) {
+          adminList.innerHTML = '<p style="color:#7a8fa8; text-align:center; padding:20px 0;">📭 No submissions yet.</p>';
+          return;
+        }
+        let html = '';
+        data.forEach((row) => {
+          const type = row.school_type || 'primary';
+          const typeLabel = type === 'primary' ? '🏫 Primary' : '🏛️ Secondary';
+          html += `<div class="admin-item">
+            <div class="top-row">
+              <span><i class="fas fa-school" style="margin-right:6px;"></i>${row.school_name || 'N/A'}</span>
+              <span class="school-type">${typeLabel}</span>
+            </div>
+            <div class="details">
+              <span><i class="fas fa-map-pin"></i> ${row.status || '-'}</span>
+              <span><i class="fas fa-road"></i> ${row.distance || '-'} km</span>
+              <span><i class="fas fa-hashtag"></i> ${row.emis || '-'}</span>
+              <span><i class="fas fa-users"></i> M/F: ${row.male_teachers || 0}/${row.female_teachers || 0}</span>
+              <span><i class="fas fa-chair"></i> Desks: ${row.desks || 0}</span>
+              <span><i class="fas fa-tint"></i> ${row.water || '-'}</span>
+            </div>
+            <div class="timestamp">
+              <i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}
+            </div>
+          </div>`;
+        });
+        adminList.innerHTML = html;
+      } catch (err) {
+        adminList.innerHTML = `<p style="color:#c0392b; text-align:center;">⚠️ Error: ${err.message}</p>`;
+        console.error(err);
+      }
+    }
+
+    refreshBtn.addEventListener('click', loadAdminData);
+
+    // ---------- EXPORT ADMIN CSV ----------
+    exportCsvBtn.addEventListener('click', async function() {
+      try {
+        const { data, error } = await supabase.from(TABLE_NAME).select('*');
+        if (error) throw error;
+        if (!data || data.length === 0) { alert('No data to export'); return; }
+        const headers = Object.keys(data[0]).filter(k => k !== 'id' && k !== 'created_at');
+        const headerRow = headers.join(',');
+        const rows = data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','));
+        const csv = headerRow + '\n' + rows.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `mbala_schools_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast('✅ CSV exported');
+      } catch (err) { alert('Export error: '+err.message); }
+    });
+
+    // ---------- SUBMIT ENTRY (Primary & Secondary) ----------
+    document.querySelectorAll('[data-type]').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const type = this.dataset.type; // 'primary' or 'secondary'
+        let payload = { school_type: type };
+
+        if (type === 'primary') {
+          payload = {
+            ...payload,
+            school_name: document.getElementById('priName').value.trim() || 'N/A',
+            status: document.getElementById('priStatus').value,
+            distance: parseInt(document.getElementById('priDist').value) || 0,
+            emis: document.getElementById('priEmis').value.trim() || 'N/A',
+            staff_houses: parseInt(document.getElementById('priHouses').value) || 0,
+            class_perm: parseInt(document.getElementById('priClassPerm').value) || 0,
+            class_temp: parseInt(document.getElementById('priClassTemp').value) || 0,
+            desks: parseInt(document.getElementById('priDesks').value) || 0,
+            desk_shortfall: parseInt(document.getElementById('priDeskShort').value) || 0,
+            grade1: document.getElementById('priG1').value || '',
+            grade2_7: document.getElementById('priG2_7').value || '',
+            grade8_9: document.getElementById('priG8_9').value || '',
+            ece: document.getElementById('priEce').value || '',
+            male_teachers: parseInt(document.getElementById('priMale').value) || 0,
+            female_teachers: parseInt(document.getElementById('priFemale').value) || 0,
+            comp_func: parseInt(document.getElementById('priCompFunc').value) || 0,
+            comp_dys: parseInt(document.getElementById('priCompDys').value) || 0,
+            power: document.getElementById('priPower').value,
+            water: document.getElementById('priWater').value,
+            vip_latrines: parseInt(document.getElementById('priVip').value) || 0,
+            pit_latrines: parseInt(document.getElementById('priPit').value) || 0,
+            mobile_network: document.getElementById('priMobile').value,
+            teacher_sample: document.getElementById('priTeacherSample').value || ''
+          };
+        } else { // secondary
+          payload = {
+            ...payload,
+            school_name: document.getElementById('secName').value.trim() || 'N/A',
+            status: document.getElementById('secStatus').value,
+            distance: parseInt(document.getElementById('secDist').value) || 0,
+            emis: document.getElementById('secEmis').value.trim() || 'N/A',
+            staff_houses: parseInt(document.getElementById('secHouses').value) || 0,
+            class_perm: parseInt(document.getElementById('secClassPerm').value) || 0,
+            class_temp: parseInt(document.getElementById('secClassTemp').value) || 0,
+            desks: parseInt(document.getElementById('secDesks').value) || 0,
+            desk_shortfall: parseInt(document.getElementById('secDeskShort').value) || 0,
+            form1: document.getElementById('secF1').value || '',
+            grade9: document.getElementById('secG9').value || '',
+            grade10_12: document.getElementById('secG10_12').value || '',
+            teachers_mf: document.getElementById('secTeachersMF').value || '',
+            comp_func: parseInt(document.getElementById('secCompFunc').value) || 0,
+            comp_dys: parseInt(document.getElementById('secCompDys').value) || 0,
+            water: document.getElementById('secWater').value,
+            vip_latrines: parseInt(document.getElementById('secVip').value) || 0,
+            pit_latrines: parseInt(document.getElementById('secPit').value) || 0,
+            mobile_network: document.getElementById('secMobile').value,
+            teacher_sample: document.getElementById('secTeacherSample').value || ''
+          };
+        }
+
+        try {
+          const { data, error } = await supabase.from(TABLE_NAME).insert([payload]);
+          if (error) throw error;
+          showToast(`✅ ${type.charAt(0).toUpperCase()+type.slice(1)} data saved!`);
+          // optionally clear some fields
+          if (type === 'primary') {
+            document.getElementById('priName').value = '';
+            document.getElementById('priTeacherSample').value = '';
+          } else {
+            document.getElementById('secName').value = '';
+            document.getElementById('secTeacherSample').value = '';
+          }
+        } catch (err) {
+          alert('❌ Error: ' + err.message);
+          console.error(err);
+        }
+      });
+    });
+
+    // ---------- TOAST HELPER ----------
+    function showToast(msg) {
+      toastMsg.innerText = msg;
+      toastDiv.style.display = 'flex';
+      setTimeout(() => { toastDiv.style.display = 'none'; }, 4000);
+    }
+
+    // ---------- AUTO LOGIN CHECK ----------
+    if (sessionStorage.getItem('adminLogged') === 'true') {
+      // If admin panel is open, load data
+      if (adminPanel.style.display !== 'none') {
+        adminContent.style.display = 'block';
+        loadAdminData();
+      }
+    }
+
+    console.log('✅ MBALA app ready. Update SUPABASE_URL and SUPABASE_ANON_KEY');
+  })();
+</script>
+</body>
+</html>
