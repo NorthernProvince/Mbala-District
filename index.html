@@ -10,7 +10,6 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
     <style>
-        /* Same styles as before - keeping it concise */
         * {
             margin: 0;
             padding: 0;
@@ -856,7 +855,7 @@
             });
 
             // =============================================
-            // DELETE FUNCTION - Using Event Delegation
+            // DELETE FUNCTION
             // =============================================
             async function deleteRecord(id) {
                 if (!isLoggedIn) {
@@ -873,16 +872,12 @@
                         .eq('id', id);
                     if (error) throw error;
                     showToast('✅ Record deleted successfully');
-                    // Refresh the list after deletion
                     await loadAdminData();
                 } catch (err) {
                     showToast('❌ Delete error: ' + err.message);
                     console.error(err);
                 }
             }
-
-            // Make deleteRecord globally accessible
-            window.deleteRecord = deleteRecord;
 
             // =============================================
             // LOAD ADMIN DATA with Event Delegation
@@ -934,27 +929,29 @@
                     });
                     adminList.innerHTML = html;
 
-                    // Using event delegation - attach listener to parent container
-                    // This ensures all delete buttons work even if added dynamically
-                    adminList.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.removeEventListener('click', handleDeleteClick);
-                        btn.addEventListener('click', handleDeleteClick);
-                    });
-
                 } catch (err) {
                     adminList.innerHTML = `<p style="color:#c62828; text-align:center; padding:20px 0;">⚠️ ${err.message}</p>`;
                     console.error(err);
                 }
             }
 
-            // Handle delete button click
-            function handleDeleteClick(e) {
-                e.stopPropagation();
-                const id = parseInt(this.getAttribute('data-id'));
-                if (id) {
-                    deleteRecord(id);
+            // =============================================
+            // EVENT DELEGATION - Listen for clicks on adminList
+            // =============================================
+            adminList.addEventListener('click', function(e) {
+                // Find if the clicked element or its parent is a delete button
+                const deleteBtn = e.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(deleteBtn.getAttribute('data-id'));
+                    if (id) {
+                        deleteRecord(id);
+                    } else {
+                        console.error('No ID found on delete button');
+                        showToast('❌ Error: Could not find record ID');
+                    }
                 }
-            }
+            });
 
             // =============================================
             // REFRESH BUTTON
