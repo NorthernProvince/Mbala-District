@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>📋 MBALA Education Data · Entry</title>
+  <title>📋 MBALA Education Data</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <!-- SheetJS for clean Excel export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
     body {
@@ -66,7 +68,6 @@
     .header-actions .admin-badge:hover { background: #3b557a; }
     .header-actions .admin-badge i { font-size: 12px; }
     .app-content { padding: 16px 14px 20px; background: white; }
-    /* tabs inside content */
     .tabs {
       display: flex;
       background: #eef2f7;
@@ -365,7 +366,7 @@
     <div class="footer-note"><i class="fas fa-database"></i> Supabase · MBALA 2025</div>
   </div>
 
-  <!-- ============ ADMIN OVERLAY (hidden by default) ============ -->
+  <!-- ============ ADMIN OVERLAY ============ -->
   <div id="adminPanel" style="display:none; background:white; padding:16px 14px 20px; border-top:2px solid #1a2b4a;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <span class="section-title" style="margin:0;"><i class="fas fa-database"></i> Admin Dashboard</span>
@@ -378,7 +379,7 @@
     <div id="adminContent" style="display:none;">
       <div class="admin-actions">
         <button id="refreshAdminBtn" class="btn btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
-        <button id="exportAdminCsvBtn" class="btn" style="background:#1a2b4a;"><i class="fas fa-file-export"></i> CSV</button>
+        <button id="exportExcelBtn" class="btn" style="background:#1a2b4a;"><i class="fas fa-file-excel"></i> Excel</button>
       </div>
       <div id="adminList" class="admin-list">
         <p style="color:#7a8fa8; text-align:center; padding:20px 0;">Login to view data</p>
@@ -390,8 +391,8 @@
 <script>
   (function() {
     // ---------- SUPABASE CONFIG ----------
-    const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co';        // <-- CHANGE
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k';                     // <-- CHANGE
+    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';        // <-- CHANGE
+    const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';                     // <-- CHANGE
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const TABLE_NAME = 'schools_data';
 
@@ -407,7 +408,7 @@
     const adminContent = document.getElementById('adminContent');
     const adminList = document.getElementById('adminList');
     const refreshBtn = document.getElementById('refreshAdminBtn');
-    const exportCsvBtn = document.getElementById('exportAdminCsvBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
     const toastDiv = document.getElementById('globalToast');
     const toastMsg = document.getElementById('toastMsg');
 
@@ -433,7 +434,6 @@
     adminHeaderBtn.addEventListener('click', function() {
       if (adminPanel.style.display === 'none') {
         adminPanel.style.display = 'block';
-        // if already logged in, show content
         if (sessionStorage.getItem('adminLogged') === 'true') {
           adminContent.style.display = 'block';
           loadAdminData();
@@ -511,30 +511,131 @@
 
     refreshBtn.addEventListener('click', loadAdminData);
 
-    // ---------- EXPORT ADMIN CSV ----------
-    exportCsvBtn.addEventListener('click', async function() {
+    // ---------- EXPORT CLEAN EXCEL ----------
+    exportExcelBtn.addEventListener('click', async function() {
       try {
-        const { data, error } = await supabase.from(TABLE_NAME).select('*');
+        const { data, error } = await supabase.from(TABLE_NAME).select('*').order('created_at', { ascending: false });
         if (error) throw error;
         if (!data || data.length === 0) { alert('No data to export'); return; }
-        const headers = Object.keys(data[0]).filter(k => k !== 'id' && k !== 'created_at');
-        const headerRow = headers.join(',');
-        const rows = data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','));
-        const csv = headerRow + '\n' + rows.join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+        // Prepare data for Excel
+        const headers = [
+          'School Type', 'School Name', 'Status', 'Distance (km)', 'EMIS',
+          'Staff Houses', 'Classrooms (Perm)', 'Classrooms (Temp)', 'Desks Available', 'Desk Shortfall',
+          'Grade 1 (B/G)', 'Grade 2-7 (B/G)', 'Grade 8-9 (B/G)', 'ECE (B/G)',
+          'Form 1 (B/G)', 'Grade 9 (B/G)', 'Grade 10-12 (B/G)', 'Teachers (M/F)',
+          'Male Teachers', 'Female Teachers', 'Computers (Func)', 'Computers (Dys)',
+          'Power', 'Water', 'VIP Latrines', 'Pit Latrines', 'Mobile Network', 'Teacher Sample'
+        ];
+
+        // Build rows with proper data
+        const rows = data.map(row => {
+          const isPrimary = row.school_type === 'primary';
+          return [
+            isPrimary ? 'Primary' : 'Secondary',
+            row.school_name || '',
+            row.status || '',
+            row.distance || 0,
+            row.emis || '',
+            row.staff_houses || 0,
+            row.class_perm || 0,
+            row.class_temp || 0,
+            row.desks || 0,
+            row.desk_shortfall || 0,
+            isPrimary ? (row.grade1 || '') : '',
+            isPrimary ? (row.grade2_7 || '') : '',
+            isPrimary ? (row.grade8_9 || '') : '',
+            isPrimary ? (row.ece || '') : '',
+            !isPrimary ? (row.form1 || '') : '',
+            !isPrimary ? (row.grade9 || '') : '',
+            !isPrimary ? (row.grade10_12 || '') : '',
+            !isPrimary ? (row.teachers_mf || '') : '',
+            row.male_teachers || 0,
+            row.female_teachers || 0,
+            row.comp_func || 0,
+            row.comp_dys || 0,
+            row.power || '',
+            row.water || '',
+            row.vip_latrines || 0,
+            row.pit_latrines || 0,
+            row.mobile_network || '',
+            row.teacher_sample || ''
+          ];
+        });
+
+        // Calculate totals
+        const totals = [
+          'TOTALS', '', '', '', '',
+          rows.reduce((sum, r) => sum + r[5], 0),
+          rows.reduce((sum, r) => sum + r[6], 0),
+          rows.reduce((sum, r) => sum + r[7], 0),
+          rows.reduce((sum, r) => sum + r[8], 0),
+          rows.reduce((sum, r) => sum + r[9], 0),
+          '', '', '', '',
+          '', '', '', '',
+          rows.reduce((sum, r) => sum + r[18], 0),
+          rows.reduce((sum, r) => sum + r[19], 0),
+          rows.reduce((sum, r) => sum + r[20], 0),
+          rows.reduce((sum, r) => sum + r[21], 0),
+          '', '', '',
+          rows.reduce((sum, r) => sum + r[24], 0),
+          rows.reduce((sum, r) => sum + r[25], 0),
+          '', ''
+        ];
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        
+        // Create worksheet data with header row
+        const wsData = [
+          ['Ministry of Education - Mbala District School Data', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+          ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+          headers,
+          ...rows,
+          totals
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+        // Set column widths
+        ws['!cols'] = [
+          { wch: 15 }, { wch: 25 }, { wch: 12 }, { wch: 12 }, { wch: 14 },
+          { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 12 },
+          { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 14 },
+          { wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 14 },
+          { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+          { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 16 }, { wch: 25 }
+        ];
+
+        // Merge title cells
+        ws['!merges'] = [
+          { s: { r: 0, c: 0 }, e: { r: 0, c: 27 } },
+          { s: { r: 1, c: 0 }, e: { r: 1, c: 27 } }
+        ];
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Schools Data');
+
+        // Generate Excel file
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], { type: 'application/octet-stream' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `mbala_schools_${new Date().toISOString().slice(0,10)}.csv`;
+        link.download = `MBALA_School_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
         link.click();
         URL.revokeObjectURL(link.href);
-        showToast('✅ CSV exported');
-      } catch (err) { alert('Export error: '+err.message); }
+        showToast('✅ Excel exported with formatting');
+
+      } catch (err) {
+        alert('Export error: ' + err.message);
+        console.error(err);
+      }
     });
 
-    // ---------- SUBMIT ENTRY (Primary & Secondary) ----------
+    // ---------- SUBMIT ENTRY ----------
     document.querySelectorAll('[data-type]').forEach(btn => {
       btn.addEventListener('click', async function() {
-        const type = this.dataset.type; // 'primary' or 'secondary'
+        const type = this.dataset.type;
         let payload = { school_type: type };
 
         if (type === 'primary') {
@@ -564,7 +665,7 @@
             mobile_network: document.getElementById('priMobile').value,
             teacher_sample: document.getElementById('priTeacherSample').value || ''
           };
-        } else { // secondary
+        } else {
           payload = {
             ...payload,
             school_name: document.getElementById('secName').value.trim() || 'N/A',
@@ -594,7 +695,6 @@
           const { data, error } = await supabase.from(TABLE_NAME).insert([payload]);
           if (error) throw error;
           showToast(`✅ ${type.charAt(0).toUpperCase()+type.slice(1)} data saved!`);
-          // optionally clear some fields
           if (type === 'primary') {
             document.getElementById('priName').value = '';
             document.getElementById('priTeacherSample').value = '';
@@ -618,7 +718,6 @@
 
     // ---------- AUTO LOGIN CHECK ----------
     if (sessionStorage.getItem('adminLogged') === 'true') {
-      // If admin panel is open, load data
       if (adminPanel.style.display !== 'none') {
         adminContent.style.display = 'block';
         loadAdminData();
