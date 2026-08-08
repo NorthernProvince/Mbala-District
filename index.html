@@ -181,11 +181,6 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
         }
-        .row-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
-        }
         .btn {
             background: #1a2b4a;
             border: none;
@@ -357,7 +352,7 @@
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
-            display: block;
+            display: none;
         }
         .setup-box.hidden {
             display: none;
@@ -436,14 +431,12 @@
             .row-3 {
                 grid-template-columns: 1fr 1fr;
             }
-            .row-4 {
-                grid-template-columns: 1fr 1fr;
-            }
             .app-container {
                 border-radius: 24px;
             }
-            .field input, .field select {
-                font-size: 16px; /* prevents iOS zoom */
+            .field input,
+            .field select {
+                font-size: 16px;
             }
             .admin-login-area {
                 flex-direction: column;
@@ -466,22 +459,6 @@
             <div class="tabs" id="tabContainer">
                 <button class="tab active" data-tab="primaryTab"><i class="fas fa-chalkboard-teacher"></i> Primary</button>
                 <button class="tab" data-tab="secondaryTab"><i class="fas fa-school"></i> Secondary</button>
-            </div>
-
-            <!-- SETUP BOX -->
-            <div id="setupBox" class="setup-box">
-                <h4><i class="fas fa-cog"></i> Supabase Configuration</h4>
-                <p style="font-size:12px; color:#5d4037; margin-bottom:12px;">Enter your Supabase project URL and anonymous key.</p>
-                <div class="field">
-                    <label><i class="fas fa-link"></i> Supabase URL</label>
-                    <input type="text" id="supabaseUrlInput" placeholder="https://your-project.supabase.co">
-                </div>
-                <div class="field">
-                    <label><i class="fas fa-key"></i> Anon Key</label>
-                    <input type="text" id="supabaseKeyInput" placeholder="Your anon/public key">
-                </div>
-                <button id="saveConfigBtn" class="btn btn-warning" style="margin-top:8px; padding:10px;"><i class="fas fa-save"></i> Connect</button>
-                <div id="configStatus" style="font-size:12px; margin-top:8px; color:#2e7d32;"></div>
             </div>
 
             <!-- PRIMARY FORM -->
@@ -518,7 +495,7 @@
                     </div>
 
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
-                    
+
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
                             <div></div>
@@ -646,7 +623,7 @@
                     </div>
 
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
-                    
+
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
                             <div></div>
@@ -756,17 +733,18 @@
 
     <script>
         (function() {
-            let SUPABASE_URL = localStorage.getItem('supabase_url') || '';
-            let SUPABASE_ANON_KEY = localStorage.getItem('supabase_anon_key') || '';
+            // =============================================
+            // HARDCODED SUPABASE CREDENTIALS
+            // Replace these with your actual Supabase credentials
+            // =============================================
+            const SUPABASE_URL = 'https://your-project.supabase.co'; // <-- CHANGE THIS
+            const SUPABASE_ANON_KEY = 'your-anon-key-here'; // <-- CHANGE THIS
+            // =============================================
+
             let supabaseClient = null;
             let isLoggedIn = false;
 
             // DOM refs
-            const setupBox = document.getElementById('setupBox');
-            const supabaseUrlInput = document.getElementById('supabaseUrlInput');
-            const supabaseKeyInput = document.getElementById('supabaseKeyInput');
-            const saveConfigBtn = document.getElementById('saveConfigBtn');
-            const configStatus = document.getElementById('configStatus');
             const primaryTab = document.getElementById('primaryTab');
             const secondaryTab = document.getElementById('secondaryTab');
             const tabBtns = document.querySelectorAll('.tab');
@@ -785,47 +763,17 @@
             const toastDiv = document.getElementById('globalToast');
             const toastMsg = document.getElementById('toastMsg');
 
-            if (SUPABASE_URL) supabaseUrlInput.value = SUPABASE_URL;
-            if (SUPABASE_ANON_KEY) supabaseKeyInput.value = SUPABASE_ANON_KEY;
-
             function initSupabase() {
-                if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-                    try {
-                        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                        setupBox.classList.add('hidden');
-                        configStatus.textContent = '✅ Connected';
-                        configStatus.style.color = '#2e7d32';
-                        return true;
-                    } catch (e) {
-                        configStatus.textContent = '❌ Error: ' + e.message;
-                        configStatus.style.color = '#c62828';
-                        setupBox.classList.remove('hidden');
-                        return false;
-                    }
-                } else {
-                    setupBox.classList.remove('hidden');
-                    configStatus.textContent = '⚠️ Enter credentials';
-                    configStatus.style.color = '#e65100';
+                try {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase connected successfully');
+                    return true;
+                } catch (e) {
+                    console.error('❌ Supabase connection error:', e);
+                    showToast('❌ Connection error: ' + e.message);
                     return false;
                 }
             }
-
-            saveConfigBtn.addEventListener('click', function() {
-                const url = supabaseUrlInput.value.trim();
-                const key = supabaseKeyInput.value.trim();
-                if (!url || !key) {
-                    configStatus.textContent = '❌ Enter both URL and Key';
-                    configStatus.style.color = '#c62828';
-                    return;
-                }
-                localStorage.setItem('supabase_url', url);
-                localStorage.setItem('supabase_anon_key', key);
-                SUPABASE_URL = url;
-                SUPABASE_ANON_KEY = key;
-                if (initSupabase()) {
-                    showToast('✅ Connected!');
-                }
-            });
 
             function switchTab(tabId) {
                 tabBtns.forEach(t => t.classList.remove('active'));
@@ -936,7 +884,7 @@
                 }
                 if (!supabaseClient) {
                     if (!initSupabase()) {
-                        adminList.innerHTML = '<p style="color:#c62828; text-align:center; padding:20px 0;">⚠️ Configure Supabase</p>';
+                        adminList.innerHTML = '<p style="color:#c62828; text-align:center; padding:20px 0;">⚠️ Connection error</p>';
                         return;
                     }
                 }
@@ -1000,7 +948,7 @@
                 }
                 if (!supabaseClient) {
                     if (!initSupabase()) {
-                        showToast('⚠️ Configure Supabase first');
+                        showToast('⚠️ Connection error');
                         return;
                     }
                 }
@@ -1199,11 +1147,11 @@
             document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
                 if (!supabaseClient) {
                     if (!initSupabase()) {
-                        showToast('⚠️ Configure Supabase first');
+                        showToast('⚠️ Connection error');
                         return;
                     }
                 }
-                
+
                 const payload = {
                     school_type: 'primary',
                     school_name: document.getElementById('priName').value.trim() || 'N/A',
@@ -1260,11 +1208,11 @@
             document.querySelector('[data-type="secondary"]').addEventListener('click', async function() {
                 if (!supabaseClient) {
                     if (!initSupabase()) {
-                        showToast('⚠️ Configure Supabase first');
+                        showToast('⚠️ Connection error');
                         return;
                     }
                 }
-                
+
                 const payload = {
                     school_type: 'secondary',
                     school_name: document.getElementById('secName').value.trim() || 'N/A',
@@ -1322,9 +1270,10 @@
                 setTimeout(() => { toastDiv.style.display = 'none'; }, 5000);
             }
 
-            // Initialize
+            // Initialize Supabase immediately
             initSupabase();
 
+            // Check if already logged in
             if (sessionStorage.getItem('adminLogged') === 'true') {
                 if (adminPanel.style.display !== 'none') {
                     adminContent.style.display = 'block';
