@@ -324,10 +324,11 @@
             color: white;
             border: none;
             border-radius: 40px;
-            padding: 2px 12px;
+            padding: 4px 14px;
             font-size: 11px;
             cursor: pointer;
             font-weight: 600;
+            transition: 0.2s;
         }
         .admin-item .delete-btn:hover {
             background: #8a2e24;
@@ -734,11 +735,11 @@
     <script>
         (function() {
             // =============================================
-            // HARDCODED SUPABASE CREDENTIALS
+            // SUPABASE CREDENTIALS
             // Replace these with your actual Supabase credentials
             // =============================================
-            const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co'; // <-- CHANGE THIS
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k'; // <-- CHANGE THIS
+            const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k';
             // =============================================
 
             let supabaseClient = null;
@@ -854,7 +855,7 @@
                 showToast('🔒 Logged out');
             });
 
-            // DELETE FUNCTION
+            // DELETE FUNCTION - Using event delegation
             async function deleteRecord(id) {
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
@@ -876,6 +877,9 @@
                     console.error(err);
                 }
             }
+
+            // Make deleteRecord globally accessible
+            window.deleteRecord = deleteRecord;
 
             async function loadAdminData() {
                 if (!isLoggedIn) {
@@ -903,7 +907,7 @@
                     data.forEach((row) => {
                         const type = row.school_type || 'primary';
                         const typeLabel = type === 'primary' ? '🏫 Primary' : '🏛️ Secondary';
-                        html += `<div class="admin-item">
+                        html += `<div class="admin-item" data-id="${row.id}">
                             <div class="top-row">
                                 <span><i class="fas fa-school" style="margin-right:6px;"></i>${row.school_name || 'N/A'}</span>
                                 <span class="school-type">${typeLabel}</span>
@@ -918,19 +922,26 @@
                             </div>
                             <div class="timestamp">
                                 <span><i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}</span>
-                                <button class="delete-btn" onclick="deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </div>`;
                     });
                     adminList.innerHTML = html;
+
+                    // Add event listeners to delete buttons using event delegation
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const id = parseInt(this.getAttribute('data-id'));
+                            deleteRecord(id);
+                        });
+                    });
+
                 } catch (err) {
                     adminList.innerHTML = `<p style="color:#c62828; text-align:center; padding:20px 0;">⚠️ ${err.message}</p>`;
                     console.error(err);
                 }
             }
-
-            // Make deleteRecord global for onclick
-            window.deleteRecord = deleteRecord;
 
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
@@ -1132,7 +1143,7 @@
                     const link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
                     link.download =
-                    `MBALA_School_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
+                        `MBALA_School_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
                     link.click();
                     URL.revokeObjectURL(link.href);
                     showToast('✅ Excel exported with 2 sheets');
@@ -1275,7 +1286,9 @@
 
             // Check if already logged in
             if (sessionStorage.getItem('adminLogged') === 'true') {
-                if (adminPanel.style.display !== 'none') {
+                isLoggedIn = true;
+                if (!adminPanel.classList.contains('hidden')) {
+                    adminLoginSection.style.display = 'none';
                     adminContent.style.display = 'block';
                     loadAdminData();
                 }
