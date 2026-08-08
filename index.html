@@ -10,6 +10,7 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
     <style>
+        /* Same styles as before - keeping it concise */
         * {
             margin: 0;
             padding: 0;
@@ -736,7 +737,6 @@
         (function() {
             // =============================================
             // SUPABASE CREDENTIALS
-            // Replace these with your actual Supabase credentials
             // =============================================
             const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k';
@@ -855,7 +855,9 @@
                 showToast('🔒 Logged out');
             });
 
-            // DELETE FUNCTION - Using event delegation
+            // =============================================
+            // DELETE FUNCTION - Using Event Delegation
+            // =============================================
             async function deleteRecord(id) {
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
@@ -871,7 +873,8 @@
                         .eq('id', id);
                     if (error) throw error;
                     showToast('✅ Record deleted successfully');
-                    loadAdminData();
+                    // Refresh the list after deletion
+                    await loadAdminData();
                 } catch (err) {
                     showToast('❌ Delete error: ' + err.message);
                     console.error(err);
@@ -881,6 +884,9 @@
             // Make deleteRecord globally accessible
             window.deleteRecord = deleteRecord;
 
+            // =============================================
+            // LOAD ADMIN DATA with Event Delegation
+            // =============================================
             async function loadAdminData() {
                 if (!isLoggedIn) {
                     adminList.innerHTML = '<p style="color:#c62828; text-align:center; padding:20px 0;">🔒 Please login</p>';
@@ -928,13 +934,11 @@
                     });
                     adminList.innerHTML = html;
 
-                    // Add event listeners to delete buttons using event delegation
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const id = parseInt(this.getAttribute('data-id'));
-                            deleteRecord(id);
-                        });
+                    // Using event delegation - attach listener to parent container
+                    // This ensures all delete buttons work even if added dynamically
+                    adminList.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.removeEventListener('click', handleDeleteClick);
+                        btn.addEventListener('click', handleDeleteClick);
                     });
 
                 } catch (err) {
@@ -943,6 +947,18 @@
                 }
             }
 
+            // Handle delete button click
+            function handleDeleteClick(e) {
+                e.stopPropagation();
+                const id = parseInt(this.getAttribute('data-id'));
+                if (id) {
+                    deleteRecord(id);
+                }
+            }
+
+            // =============================================
+            // REFRESH BUTTON
+            // =============================================
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
                     loadAdminData();
@@ -951,7 +967,9 @@
                 }
             });
 
+            // =============================================
             // EXPORT EXCEL WITH TWO SHEETS
+            // =============================================
             exportExcelBtn.addEventListener('click', async function() {
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
@@ -1154,7 +1172,9 @@
                 }
             });
 
+            // =============================================
             // SUBMIT ENTRY - PRIMARY
+            // =============================================
             document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
                 if (!supabaseClient) {
                     if (!initSupabase()) {
@@ -1215,7 +1235,9 @@
                 }
             });
 
+            // =============================================
             // SUBMIT ENTRY - SECONDARY
+            // =============================================
             document.querySelector('[data-type="secondary"]').addEventListener('click', async function() {
                 if (!supabaseClient) {
                     if (!initSupabase()) {
@@ -1270,6 +1292,9 @@
                 }
             });
 
+            // =============================================
+            // TOAST HELPER
+            // =============================================
             function showToast(msg) {
                 toastMsg.innerText = msg;
                 toastDiv.style.display = 'flex';
@@ -1281,7 +1306,9 @@
                 setTimeout(() => { toastDiv.style.display = 'none'; }, 5000);
             }
 
-            // Initialize Supabase immediately
+            // =============================================
+            // INITIALIZE
+            // =============================================
             initSupabase();
 
             // Check if already logged in
