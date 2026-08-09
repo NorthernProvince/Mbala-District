@@ -9,7 +9,6 @@
     </script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
-    <!-- bcryptjs for password verification -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js">
     </script>
     <style>
@@ -464,7 +463,7 @@
 <body>
     <div class="app-container" id="app">
         <div class="app-header">
-            <h1><i class="fas fa-graduation-cap"></i> Mbala District Data</h1>
+            <h1><i class="fas fa-graduation-cap"></i> Mbala District School Data</h1>
             <div class="header-actions">
                 <span class="admin-badge" id="adminHeaderBtn"><i class="fas fa-user-shield"></i> Admin</span>
             </div>
@@ -749,7 +748,7 @@
     <script>
         (function() {
             // =============================================
-            // SUPABASE CREDENTIALS - Keep these secure
+            // SUPABASE CREDENTIALS
             // =============================================
             const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k';
@@ -842,13 +841,11 @@
                     return;
                 }
 
-                // Show loading
                 loginLoading.classList.add('show');
                 loginError.classList.remove('show');
                 adminLoginBtn.disabled = true;
 
                 try {
-                    // Get admin record from Supabase
                     const { data, error } = await supabaseClient
                         .from('admins')
                         .select('password_hash')
@@ -872,7 +869,6 @@
                         return;
                     }
 
-                    // Verify password using bcrypt
                     const isValid = await bcrypt.compare(password, data.password_hash);
 
                     if (isValid) {
@@ -915,9 +911,11 @@
             });
 
             // =============================================
-            // DELETE FUNCTION
+            // DELETE FUNCTION - FIXED
             // =============================================
-            window.deleteRecord = async function(id) {
+            async function deleteRecord(id) {
+                console.log('🗑️ Delete function called with ID:', id);
+                
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
                     return;
@@ -926,7 +924,7 @@
                     showToast('⚠️ Database not connected');
                     return;
                 }
-                if (!confirm('Are you sure you want to delete this record? This cannot be undone.')) {
+                if (!confirm('⚠️ Are you sure you want to delete this record? This cannot be undone.')) {
                     return;
                 }
 
@@ -937,18 +935,22 @@
                         .eq('id', id);
 
                     if (error) {
-                        console.error('Delete error:', error);
+                        console.error('❌ Delete error:', error);
                         showToast('❌ Delete error: ' + error.message);
                         return;
                     }
 
                     showToast('✅ Record deleted successfully');
+                    // Refresh the list
                     await loadAdminData();
                 } catch (err) {
-                    console.error('Delete exception:', err);
+                    console.error('❌ Delete exception:', err);
                     showToast('❌ Error: ' + err.message);
                 }
-            };
+            }
+
+            // Make deleteRecord globally accessible for onclick
+            window.deleteRecord = deleteRecord;
 
             // =============================================
             // LOAD ADMIN DATA
@@ -997,7 +999,7 @@
                             </div>
                             <div class="timestamp">
                                 <span><i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}</span>
-                                <button class="delete-btn" onclick="deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="delete-btn" onclick="window.deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </div>`;
                     });
@@ -1371,7 +1373,6 @@
                 }
             }
 
-            // No console.log with password shown
             console.log('✅ MBALA app ready');
         })();
     </script>
