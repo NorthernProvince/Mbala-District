@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js">
     </script>
     <style>
+        /* Styles remain the same - keeping it concise */
         * {
             margin: 0;
             padding: 0;
@@ -911,11 +912,11 @@
             });
 
             // =============================================
-            // DELETE FUNCTION - FIXED using event delegation
+            // DELETE FUNCTION - Using direct button click handlers
             // =============================================
             async function deleteRecord(id) {
                 console.log('🗑️ Delete function called with ID:', id);
-                
+
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
                     return;
@@ -950,7 +951,7 @@
             }
 
             // =============================================
-            // LOAD ADMIN DATA with Event Delegation for Delete
+            // LOAD ADMIN DATA
             // =============================================
             async function loadAdminData() {
                 if (!isLoggedIn) {
@@ -996,7 +997,7 @@
                             </div>
                             <div class="timestamp">
                                 <span><i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}</span>
-                                <button class="delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="delete-btn" onclick="deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </div>`;
                     });
@@ -1008,37 +1009,8 @@
                 }
             }
 
-            // =============================================
-            // EVENT DELEGATION - Handle delete button clicks
-            // =============================================
-            document.addEventListener('click', function(e) {
-                // Check if the clicked element or its parent is a delete button
-                const deleteBtn = e.target.closest('.delete-btn');
-                if (deleteBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const id = parseInt(deleteBtn.getAttribute('data-id'));
-                    if (id) {
-                        deleteRecord(id);
-                    } else {
-                        console.error('No ID found on delete button');
-                        showToast('❌ Error: Could not find record ID');
-                    }
-                }
-            });
-
-            // Also handle clicks on adminList specifically (for dynamic content)
-            adminList.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('.delete-btn');
-                if (deleteBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const id = parseInt(deleteBtn.getAttribute('data-id'));
-                    if (id) {
-                        deleteRecord(id);
-                    }
-                }
-            });
+            // Make deleteRecord globally accessible
+            window.deleteRecord = deleteRecord;
 
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
