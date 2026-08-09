@@ -12,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js">
     </script>
     <style>
-        /* Styles remain the same - keeping it concise */
         * {
             margin: 0;
             padding: 0;
@@ -402,6 +401,9 @@
             padding-left: 8px;
             border-left: 3px solid #ffcd3c;
         }
+        .sub-section-title i {
+            margin-right: 6px;
+        }
         .enrolment-group {
             background: #f8faff;
             border-radius: 12px;
@@ -437,6 +439,12 @@
         }
         .login-loading.show {
             display: block;
+        }
+        .infra-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #5d6f8a;
+            text-align: center;
         }
         @media (max-width: 480px) {
             .row-2 {
@@ -479,6 +487,7 @@
             <div id="primaryTab" class="section">
                 <div class="section-title"><i class="fas fa-edit"></i> Primary School Data</div>
                 <div class="form-grid" id="primaryForm">
+                    <!-- School Info -->
                     <div class="field"><label><i class="fas fa-tag"></i> School Name</label><input type="text" id="priName" placeholder="e.g. Mbala Central" style="width:100%;"></div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
@@ -488,28 +497,54 @@
                     </div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="priEmis" value="EMIS-001"></div>
-                        <div class="field"><label><i class="fas fa-home"></i> Staff Houses</label>
-                            <div class="row-3">
-                                <input type="number" id="priPermHouses" placeholder="Perm" value="4">
-                                <input type="number" id="priIncompHouses" placeholder="Incomp" value="2">
-                                <input type="number" id="priTempHouses" placeholder="Temp" value="1">
+                    </div>
+
+                    <!-- INFRASTRUCTURE - Staff Houses with labels -->
+                    <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
+                    <div class="field">
+                        <div class="row-3">
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
+                                <input type="number" id="priPermHouses" value="4" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
+                                <input type="number" id="priIncompHouses" value="2" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
+                                <input type="number" id="priTempHouses" value="1" style="text-align:center;">
                             </div>
                         </div>
                     </div>
-                    <div class="field"><label><i class="fas fa-door-open"></i> Classrooms</label>
+
+                    <!-- INFRASTRUCTURE - Classrooms with labels -->
+                    <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
+                    <div class="field">
                         <div class="row-3">
-                            <input type="number" id="priPermClass" placeholder="Permanent" value="8">
-                            <input type="number" id="priIncompClass" placeholder="Incomplete" value="2">
-                            <input type="number" id="priTempClass" placeholder="Temporal" value="1">
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
+                                <input type="number" id="priPermClass" value="8" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
+                                <input type="number" id="priIncompClass" value="2" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
+                                <input type="number" id="priTempClass" value="1" style="text-align:center;">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Desks -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-chair"></i> Desks Available</label><input type="number" id="priDesks" value="120"></div>
                         <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="priDeskShort" value="15"></div>
                     </div>
 
+                    <!-- Enrolment -->
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
-
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
                             <div></div>
@@ -543,6 +578,7 @@
                         </div>
                     </div>
 
+                    <!-- Teachers -->
                     <div class="sub-section-title"><i class="fas fa-user-tie"></i> Teachers</div>
                     <div class="row-2">
                         <div class="field"><label>Male</label><input type="number" id="priMale" value="12"></div>
@@ -553,11 +589,13 @@
                         <div class="field"><label>Shortfall</label><input type="number" id="priTeacherShort" value="2"></div>
                     </div>
 
+                    <!-- Computers -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-laptop"></i> Computers Functional</label><input type="number" id="priCompFunc" value="6"></div>
                         <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="priCompDys" value="2"></div>
                     </div>
 
+                    <!-- Power & Water -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-bolt"></i> Power Source</label>
                             <select id="priPower"><option value="HEP">HEP</option><option value="Solar">Solar</option><option value="Non">Non</option></select>
@@ -574,6 +612,7 @@
                         </div>
                     </div>
 
+                    <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
                             <input type="number" id="priVip" placeholder="Double VIP" value="4">
@@ -582,6 +621,7 @@
                         </div>
                     </div>
 
+                    <!-- Mobile Network -->
                     <div class="field"><label><i class="fas fa-signal"></i> Mobile Network</label>
                         <select id="priMobile">
                             <option value="Airtel, MTN, Zamtel">Airtel, MTN, Zamtel</option>
@@ -591,10 +631,12 @@
                         </select>
                     </div>
 
+                    <!-- Specialization -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Specialization Teaching</label>
                         <input type="text" id="priSpecialization" placeholder="e.g. Grade 1-4" value="Grade 1-4">
                     </div>
 
+                    <!-- Teacher Sample -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher Sample</label>
                         <input type="text" id="priTeacherSample" placeholder="Name – Role" value="Mwansa K. – HEADTEACHER">
                     </div>
@@ -607,6 +649,7 @@
             <div id="secondaryTab" class="section hidden">
                 <div class="section-title"><i class="fas fa-school"></i> Secondary School Data</div>
                 <div class="form-grid" id="secondaryForm">
+                    <!-- School Info -->
                     <div class="field"><label><i class="fas fa-tag"></i> School Name</label><input type="text" id="secName" placeholder="e.g. Mbala Secondary" style="width:100%;"></div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
@@ -616,28 +659,54 @@
                     </div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="secEmis" value="EMIS-201"></div>
-                        <div class="field"><label><i class="fas fa-home"></i> Staff Houses</label>
-                            <div class="row-3">
-                                <input type="number" id="secPermHouses" placeholder="Perm" value="6">
-                                <input type="number" id="secIncompHouses" placeholder="Incomp" value="3">
-                                <input type="number" id="secTempHouses" placeholder="Temp" value="1">
+                    </div>
+
+                    <!-- INFRASTRUCTURE - Staff Houses with labels -->
+                    <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
+                    <div class="field">
+                        <div class="row-3">
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
+                                <input type="number" id="secPermHouses" value="6" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
+                                <input type="number" id="secIncompHouses" value="3" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
+                                <input type="number" id="secTempHouses" value="1" style="text-align:center;">
                             </div>
                         </div>
                     </div>
-                    <div class="field"><label><i class="fas fa-door-open"></i> Classrooms</label>
+
+                    <!-- INFRASTRUCTURE - Classrooms with labels -->
+                    <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
+                    <div class="field">
                         <div class="row-3">
-                            <input type="number" id="secPermClass" placeholder="Permanent" value="12">
-                            <input type="number" id="secIncompClass" placeholder="Incomplete" value="2">
-                            <input type="number" id="secTempClass" placeholder="Temporal" value="1">
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
+                                <input type="number" id="secPermClass" value="12" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
+                                <input type="number" id="secIncompClass" value="2" style="text-align:center;">
+                            </div>
+                            <div class="field">
+                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
+                                <input type="number" id="secTempClass" value="1" style="text-align:center;">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Desks -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-chair"></i> Desks Available</label><input type="number" id="secDesks" value="200"></div>
                         <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="secDeskShort" value="22"></div>
                     </div>
 
+                    <!-- Enrolment -->
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
-
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
                             <div></div>
@@ -661,6 +730,7 @@
                         </div>
                     </div>
 
+                    <!-- Teachers -->
                     <div class="sub-section-title"><i class="fas fa-user-tie"></i> Teachers</div>
                     <div class="row-2">
                         <div class="field"><label>Male</label><input type="number" id="secMale" value="18"></div>
@@ -671,11 +741,13 @@
                         <div class="field"><label>Shortfall</label><input type="number" id="secTeacherShort" value="4"></div>
                     </div>
 
+                    <!-- Computers -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-laptop"></i> Computers Functional</label><input type="number" id="secCompFunc" value="15"></div>
                         <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="secCompDys" value="3"></div>
                     </div>
 
+                    <!-- Water -->
                     <div class="field"><label><i class="fas fa-tint"></i> Water Source</label>
                         <select id="secWater">
                             <option value="Piped">Piped</option>
@@ -687,6 +759,7 @@
                         </select>
                     </div>
 
+                    <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
                             <input type="number" id="secVip" placeholder="Double VIP" value="6">
@@ -695,6 +768,7 @@
                         </div>
                     </div>
 
+                    <!-- Mobile Network -->
                     <div class="field"><label><i class="fas fa-signal"></i> Mobile Network</label>
                         <select id="secMobile">
                             <option value="Airtel, MTN, Zamtel">Airtel, MTN, Zamtel</option>
@@ -704,6 +778,7 @@
                         </select>
                     </div>
 
+                    <!-- Teacher Sample -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher Sample</label>
                         <input type="text" id="secTeacherSample" placeholder="Name – Role" value="B. Chanda – HEADTEACHER">
                     </div>
@@ -912,7 +987,7 @@
             });
 
             // =============================================
-            // DELETE FUNCTION - Using direct button click handlers
+            // DELETE FUNCTION
             // =============================================
             async function deleteRecord(id) {
                 console.log('🗑️ Delete function called with ID:', id);
@@ -942,13 +1017,14 @@
                     }
 
                     showToast('✅ Record deleted successfully');
-                    // Refresh the list
                     await loadAdminData();
                 } catch (err) {
                     console.error('❌ Delete exception:', err);
                     showToast('❌ Error: ' + err.message);
                 }
             }
+
+            window.deleteRecord = deleteRecord;
 
             // =============================================
             // LOAD ADMIN DATA
@@ -1008,9 +1084,6 @@
                     console.error(err);
                 }
             }
-
-            // Make deleteRecord globally accessible
-            window.deleteRecord = deleteRecord;
 
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
