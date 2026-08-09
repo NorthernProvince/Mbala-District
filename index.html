@@ -446,6 +446,27 @@
             color: #5d6f8a;
             text-align: center;
         }
+        /* New styles for better infrastructure labels */
+        .infra-group {
+            background: #f8faff;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #e5ebf3;
+        }
+        .infra-group .infra-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #5d6f8a;
+            text-align: center;
+            margin-bottom: 2px;
+        }
+        .infra-group input {
+            text-align: center;
+            padding: 8px 6px;
+        }
+        .infra-group .field {
+            gap: 2px;
+        }
         @media (max-width: 480px) {
             .row-2 {
                 grid-template-columns: 1fr;
@@ -501,38 +522,38 @@
 
                     <!-- INFRASTRUCTURE - Staff Houses with labels -->
                     <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
-                    <div class="field">
+                    <div class="infra-group">
                         <div class="row-3">
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
-                                <input type="number" id="priPermHouses" value="4" style="text-align:center;">
+                                <div class="infra-label">Permanent</div>
+                                <input type="number" id="priPermHouses" value="4">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
-                                <input type="number" id="priIncompHouses" value="2" style="text-align:center;">
+                                <div class="infra-label">Incomplete</div>
+                                <input type="number" id="priIncompHouses" value="2">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
-                                <input type="number" id="priTempHouses" value="1" style="text-align:center;">
+                                <div class="infra-label">Temporal</div>
+                                <input type="number" id="priTempHouses" value="1">
                             </div>
                         </div>
                     </div>
 
                     <!-- INFRASTRUCTURE - Classrooms with labels -->
                     <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
-                    <div class="field">
+                    <div class="infra-group">
                         <div class="row-3">
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
-                                <input type="number" id="priPermClass" value="8" style="text-align:center;">
+                                <div class="infra-label">Permanent</div>
+                                <input type="number" id="priPermClass" value="8">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
-                                <input type="number" id="priIncompClass" value="2" style="text-align:center;">
+                                <div class="infra-label">Incomplete</div>
+                                <input type="number" id="priIncompClass" value="2">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
-                                <input type="number" id="priTempClass" value="1" style="text-align:center;">
+                                <div class="infra-label">Temporal</div>
+                                <input type="number" id="priTempClass" value="1">
                             </div>
                         </div>
                     </div>
@@ -615,9 +636,18 @@
                     <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
-                            <input type="number" id="priVip" placeholder="Double VIP" value="4">
-                            <input type="number" id="priSingleVip" placeholder="Single VIP" value="6">
-                            <input type="number" id="priPit" placeholder="Pit Latrines" value="2">
+                            <div class="field">
+                                <div class="infra-label">Double VIP</div>
+                                <input type="number" id="priVip" value="4">
+                            </div>
+                            <div class="field">
+                                <div class="infra-label">Single VIP</div>
+                                <input type="number" id="priSingleVip" value="6">
+                            </div>
+                            <div class="field">
+                                <div class="infra-label">Pit Latrines</div>
+                                <input type="number" id="priPit" value="2">
+                            </div>
                         </div>
                     </div>
 
@@ -663,38 +693,38 @@
 
                     <!-- INFRASTRUCTURE - Staff Houses with labels -->
                     <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
-                    <div class="field">
+                    <div class="infra-group">
                         <div class="row-3">
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
-                                <input type="number" id="secPermHouses" value="6" style="text-align:center;">
+                                <div class="infra-label">Permanent</div>
+                                <input type="number" id="secPermHouses" value="6">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
-                                <input type="number" id="secIncompHouses" value="3" style="text-align:center;">
+                                <div class="infra-label">Incomplete</div>
+                                <input type="number" id="secIncompHouses" value="3">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
-                                <input type="number" id="secTempHouses" value="1" style="text-align:center;">
+                                <div class="infra-label">Temporal</div>
+                                <input type="number" id="secTempHouses" value="1">
                             </div>
                         </div>
                     </div>
 
                     <!-- INFRASTRUCTURE - Classrooms with labels -->
                     <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
-                    <div class="field">
+                    <div class="infra-group">
                         <div class="row-3">
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Permanent</label>
-                                <input type="number" id="secPermClass" value="12" style="text-align:center;">
+                                <div class="infra-label">Permanent</div>
+                                <input type="number" id="secPermClass" value="12">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Incomplete</label>
-                                <input type="number" id="secIncompClass" value="2" style="text-align:center;">
+                                <div class="infra-label">Incomplete</div>
+                                <input type="number" id="secIncompClass" value="2">
                             </div>
                             <div class="field">
-                                <label style="font-size:11px; color:#5d6f8a; text-align:center;">Temporal</label>
-                                <input type="number" id="secTempClass" value="1" style="text-align:center;">
+                                <div class="infra-label">Temporal</div>
+                                <input type="number" id="secTempClass" value="1">
                             </div>
                         </div>
                     </div>
@@ -762,9 +792,18 @@
                     <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
-                            <input type="number" id="secVip" placeholder="Double VIP" value="6">
-                            <input type="number" id="secSingleVip" placeholder="Single VIP" value="8">
-                            <input type="number" id="secPit" placeholder="Pit Latrines" value="4">
+                            <div class="field">
+                                <div class="infra-label">Double VIP</div>
+                                <input type="number" id="secVip" value="6">
+                            </div>
+                            <div class="field">
+                                <div class="infra-label">Single VIP</div>
+                                <input type="number" id="secSingleVip" value="8">
+                            </div>
+                            <div class="field">
+                                <div class="infra-label">Pit Latrines</div>
+                                <input type="number" id="secPit" value="4">
+                            </div>
                         </div>
                     </div>
 
