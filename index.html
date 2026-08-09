@@ -9,6 +9,9 @@
     </script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
+    <!-- bcryptjs for password verification -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js">
+    </script>
     <style>
         * {
             margin: 0;
@@ -425,6 +428,16 @@
             text-align: center;
             font-weight: 600;
         }
+        .login-loading {
+            display: none;
+            text-align: center;
+            padding: 8px;
+            color: #1a2b4a;
+            font-size: 13px;
+        }
+        .login-loading.show {
+            display: block;
+        }
         @media (max-width: 480px) {
             .row-2 {
                 grid-template-columns: 1fr;
@@ -714,7 +727,8 @@
                     <input type="password" id="adminPass" placeholder="Enter admin password">
                     <button id="adminLoginBtn" class="btn" style="width:auto; padding:8px 18px; margin:0;"><i class="fas fa-sign-in-alt"></i> Login</button>
                 </div>
-                <div id="loginError" class="login-error">❌ Incorrect password</div>
+                <div id="loginLoading" class="login-loading"><i class="fas fa-spinner fa-spin"></i> Verifying...</div>
+                <div id="loginError" class="login-error">❌ Invalid username or password</div>
             </div>
             <div id="adminContent" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -735,7 +749,7 @@
     <script>
         (function() {
             // =============================================
-            // SUPABASE CREDENTIALS
+            // SUPABASE CREDENTIALS - Keep these secure
             // =============================================
             const SUPABASE_URL = 'https://ruewsvksoizldmaegvpo.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1ZXdzdmtzb2l6bGRtYWVndnBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxODgxODYsImV4cCI6MjEwMTc2NDE4Nn0.GVGUJb8NM7NFOMfRbgN4RbT59tIMInqRxAKep0QsS8k';
@@ -759,6 +773,7 @@
             const refreshBtn = document.getElementById('refreshAdminBtn');
             const exportExcelBtn = document.getElementById('exportExcelBtn');
             const loginError = document.getElementById('loginError');
+            const loginLoading = document.getElementById('loginLoading');
             const adminLogoutBtn = document.getElementById('adminLogoutBtn');
             const toastDiv = document.getElementById('globalToast');
             const toastMsg = document.getElementById('toastMsg');
@@ -766,7 +781,7 @@
             function initSupabase() {
                 try {
                     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log('✅ Supabase connected successfully');
+                    console.log('✅ Supabase connected');
                     return true;
                 } catch (e) {
                     console.error('❌ Supabase connection error:', e);
@@ -804,6 +819,7 @@
                         adminContent.style.display = 'none';
                         adminPassInput.value = '';
                         loginError.classList.remove('show');
+                        loginLoading.classList.remove('show');
                         adminPassInput.focus();
                     }
                 } else {
@@ -815,29 +831,72 @@
                 adminPanel.classList.add('hidden');
             });
 
-            const ADMIN_PASSWORD = 'mbala2025';
-            let loginAttempts = 0;
-
-            adminLoginBtn.addEventListener('click', function() {
-                const pass = adminPassInput.value.trim();
-                if (pass === ADMIN_PASSWORD) {
-                    isLoggedIn = true;
-                    loginError.classList.remove('show');
-                    adminLoginSection.style.display = 'none';
-                    adminContent.style.display = 'block';
-                    loadAdminData();
-                    showToast('✅ Admin access granted');
-                    adminPassInput.value = '';
-                    loginAttempts = 0;
-                } else {
-                    loginAttempts++;
+            // =============================================
+            // SECURE LOGIN - Verifies against Supabase
+            // =============================================
+            adminLoginBtn.addEventListener('click', async function() {
+                const password = adminPassInput.value.trim();
+                if (!password) {
+                    loginError.textContent = '❌ Please enter a password';
                     loginError.classList.add('show');
-                    adminPassInput.value = '';
-                    adminPassInput.focus();
-                    if (loginAttempts >= 3) {
-                        showToast('❌ Too many failed attempts');
-                        loginAttempts = 0;
+                    return;
+                }
+
+                // Show loading
+                loginLoading.classList.add('show');
+                loginError.classList.remove('show');
+                adminLoginBtn.disabled = true;
+
+                try {
+                    // Get admin record from Supabase
+                    const { data, error } = await supabaseClient
+                        .from('admins')
+                        .select('password_hash')
+                        .eq('username', 'admin')
+                        .single();
+
+                    if (error) {
+                        console.error('Error fetching admin:', error);
+                        loginError.textContent = '❌ Authentication error';
+                        loginError.classList.add('show');
+                        loginLoading.classList.remove('show');
+                        adminLoginBtn.disabled = false;
+                        return;
                     }
+
+                    if (!data) {
+                        loginError.textContent = '❌ Admin account not found';
+                        loginError.classList.add('show');
+                        loginLoading.classList.remove('show');
+                        adminLoginBtn.disabled = false;
+                        return;
+                    }
+
+                    // Verify password using bcrypt
+                    const isValid = await bcrypt.compare(password, data.password_hash);
+
+                    if (isValid) {
+                        isLoggedIn = true;
+                        loginError.classList.remove('show');
+                        adminLoginSection.style.display = 'none';
+                        adminContent.style.display = 'block';
+                        sessionStorage.setItem('adminLogged', 'true');
+                        loadAdminData();
+                        showToast('✅ Admin access granted');
+                        adminPassInput.value = '';
+                    } else {
+                        loginError.textContent = '❌ Invalid password';
+                        loginError.classList.add('show');
+                        adminPassInput.value = '';
+                        adminPassInput.focus();
+                    }
+                } catch (err) {
+                    console.error('Login error:', err);
+                    loginError.textContent = '❌ Login error: ' + err.message;
+                    loginError.classList.add('show');
+                } finally {
+                    loginLoading.classList.remove('show');
+                    adminLoginBtn.disabled = false;
                 }
             });
 
@@ -847,6 +906,7 @@
 
             adminLogoutBtn.addEventListener('click', function() {
                 isLoggedIn = false;
+                sessionStorage.removeItem('adminLogged');
                 adminLoginSection.style.display = 'block';
                 adminContent.style.display = 'none';
                 adminPassInput.value = '';
@@ -857,30 +917,41 @@
             // =============================================
             // DELETE FUNCTION
             // =============================================
-            async function deleteRecord(id) {
+            window.deleteRecord = async function(id) {
                 if (!isLoggedIn) {
                     showToast('🔒 Please login first');
+                    return;
+                }
+                if (!supabaseClient) {
+                    showToast('⚠️ Database not connected');
                     return;
                 }
                 if (!confirm('Are you sure you want to delete this record? This cannot be undone.')) {
                     return;
                 }
+
                 try {
                     const { error } = await supabaseClient
                         .from('schools_data')
                         .delete()
                         .eq('id', id);
-                    if (error) throw error;
+
+                    if (error) {
+                        console.error('Delete error:', error);
+                        showToast('❌ Delete error: ' + error.message);
+                        return;
+                    }
+
                     showToast('✅ Record deleted successfully');
                     await loadAdminData();
                 } catch (err) {
-                    showToast('❌ Delete error: ' + err.message);
-                    console.error(err);
+                    console.error('Delete exception:', err);
+                    showToast('❌ Error: ' + err.message);
                 }
-            }
+            };
 
             // =============================================
-            // LOAD ADMIN DATA with Event Delegation
+            // LOAD ADMIN DATA
             // =============================================
             async function loadAdminData() {
                 if (!isLoggedIn) {
@@ -899,16 +970,19 @@
                         .from('schools_data')
                         .select('*')
                         .order('created_at', { ascending: false });
+
                     if (error) throw error;
+
                     if (!data || data.length === 0) {
                         adminList.innerHTML = '<p style="color:#7a8fa8; text-align:center; padding:20px 0;">📭 No submissions</p>';
                         return;
                     }
+
                     let html = '';
                     data.forEach((row) => {
                         const type = row.school_type || 'primary';
                         const typeLabel = type === 'primary' ? '🏫 Primary' : '🏛️ Secondary';
-                        html += `<div class="admin-item" data-id="${row.id}">
+                        html += `<div class="admin-item">
                             <div class="top-row">
                                 <span><i class="fas fa-school" style="margin-right:6px;"></i>${row.school_name || 'N/A'}</span>
                                 <span class="school-type">${typeLabel}</span>
@@ -923,7 +997,7 @@
                             </div>
                             <div class="timestamp">
                                 <span><i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}</span>
-                                <button class="delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="delete-btn" onclick="deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </div>`;
                     });
@@ -935,27 +1009,6 @@
                 }
             }
 
-            // =============================================
-            // EVENT DELEGATION - Listen for clicks on adminList
-            // =============================================
-            adminList.addEventListener('click', function(e) {
-                // Find if the clicked element or its parent is a delete button
-                const deleteBtn = e.target.closest('.delete-btn');
-                if (deleteBtn) {
-                    e.stopPropagation();
-                    const id = parseInt(deleteBtn.getAttribute('data-id'));
-                    if (id) {
-                        deleteRecord(id);
-                    } else {
-                        console.error('No ID found on delete button');
-                        showToast('❌ Error: Could not find record ID');
-                    }
-                }
-            });
-
-            // =============================================
-            // REFRESH BUTTON
-            // =============================================
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
                     loadAdminData();
@@ -965,7 +1018,7 @@
             });
 
             // =============================================
-            // EXPORT EXCEL WITH TWO SHEETS
+            // EXPORT EXCEL
             // =============================================
             exportExcelBtn.addEventListener('click', async function() {
                 if (!isLoggedIn) {
@@ -1308,7 +1361,7 @@
             // =============================================
             initSupabase();
 
-            // Check if already logged in
+            // Check session
             if (sessionStorage.getItem('adminLogged') === 'true') {
                 isLoggedIn = true;
                 if (!adminPanel.classList.contains('hidden')) {
@@ -1318,8 +1371,8 @@
                 }
             }
 
+            // No console.log with password shown
             console.log('✅ MBALA app ready');
-            console.log('🔒 Admin password: mbala2025');
         })();
     </script>
 </body>
