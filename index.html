@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js">
     </script>
     <style>
+        /* ... styles remain the same ... */
         * {
             margin: 0;
             padding: 0;
@@ -446,7 +447,6 @@
             color: #5d6f8a;
             text-align: center;
         }
-        /* New styles for better infrastructure labels */
         .infra-group {
             background: #f8faff;
             border-radius: 12px;
@@ -504,11 +504,10 @@
                 <button class="tab" data-tab="secondaryTab"><i class="fas fa-school"></i> Secondary</button>
             </div>
 
-            <!-- PRIMARY FORM -->
+            <!-- PRIMARY FORM (shortened for brevity - same as before) -->
             <div id="primaryTab" class="section">
                 <div class="section-title"><i class="fas fa-edit"></i> Primary School Data</div>
                 <div class="form-grid" id="primaryForm">
-                    <!-- School Info -->
                     <div class="field"><label><i class="fas fa-tag"></i> School Name</label><input type="text" id="priName" placeholder="e.g. Mbala Central" style="width:100%;"></div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
@@ -520,57 +519,33 @@
                         <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="priEmis" value="EMIS-001"></div>
                     </div>
 
-                    <!-- INFRASTRUCTURE - Staff Houses with labels -->
                     <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
                     <div class="infra-group">
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Permanent</div>
-                                <input type="number" id="priPermHouses" value="4">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Incomplete</div>
-                                <input type="number" id="priIncompHouses" value="2">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Temporal</div>
-                                <input type="number" id="priTempHouses" value="1">
-                            </div>
+                            <div class="field"><div class="infra-label">Permanent</div><input type="number" id="priPermHouses" value="4"></div>
+                            <div class="field"><div class="infra-label">Incomplete</div><input type="number" id="priIncompHouses" value="2"></div>
+                            <div class="field"><div class="infra-label">Temporal</div><input type="number" id="priTempHouses" value="1"></div>
                         </div>
                     </div>
 
-                    <!-- INFRASTRUCTURE - Classrooms with labels -->
                     <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
                     <div class="infra-group">
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Permanent</div>
-                                <input type="number" id="priPermClass" value="8">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Incomplete</div>
-                                <input type="number" id="priIncompClass" value="2">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Temporal</div>
-                                <input type="number" id="priTempClass" value="1">
-                            </div>
+                            <div class="field"><div class="infra-label">Permanent</div><input type="number" id="priPermClass" value="8"></div>
+                            <div class="field"><div class="infra-label">Incomplete</div><input type="number" id="priIncompClass" value="2"></div>
+                            <div class="field"><div class="infra-label">Temporal</div><input type="number" id="priTempClass" value="1"></div>
                         </div>
                     </div>
 
-                    <!-- Desks -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-chair"></i> Desks Available</label><input type="number" id="priDesks" value="120"></div>
                         <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="priDeskShort" value="15"></div>
                     </div>
 
-                    <!-- Enrolment -->
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
-                            <div></div>
-                            <div class="gender-label">Boys</div>
-                            <div class="gender-label">Girls</div>
+                            <div></div><div class="gender-label">Boys</div><div class="gender-label">Girls</div>
                         </div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; align-items:center;">
                             <label style="font-size:12px; font-weight:500;">ECE Level 1</label>
@@ -599,7 +574,6 @@
                         </div>
                     </div>
 
-                    <!-- Teachers -->
                     <div class="sub-section-title"><i class="fas fa-user-tie"></i> Teachers</div>
                     <div class="row-2">
                         <div class="field"><label>Male</label><input type="number" id="priMale" value="12"></div>
@@ -610,13 +584,11 @@
                         <div class="field"><label>Shortfall</label><input type="number" id="priTeacherShort" value="2"></div>
                     </div>
 
-                    <!-- Computers -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-laptop"></i> Computers Functional</label><input type="number" id="priCompFunc" value="6"></div>
                         <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="priCompDys" value="2"></div>
                     </div>
 
-                    <!-- Power & Water -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-bolt"></i> Power Source</label>
                             <select id="priPower"><option value="HEP">HEP</option><option value="Solar">Solar</option><option value="Non">Non</option></select>
@@ -633,25 +605,14 @@
                         </div>
                     </div>
 
-                    <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Double VIP</div>
-                                <input type="number" id="priVip" value="4">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Single VIP</div>
-                                <input type="number" id="priSingleVip" value="6">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Pit Latrines</div>
-                                <input type="number" id="priPit" value="2">
-                            </div>
+                            <div class="field"><div class="infra-label">Double VIP</div><input type="number" id="priVip" value="4"></div>
+                            <div class="field"><div class="infra-label">Single VIP</div><input type="number" id="priSingleVip" value="6"></div>
+                            <div class="field"><div class="infra-label">Pit Latrines</div><input type="number" id="priPit" value="2"></div>
                         </div>
                     </div>
 
-                    <!-- Mobile Network -->
                     <div class="field"><label><i class="fas fa-signal"></i> Mobile Network</label>
                         <select id="priMobile">
                             <option value="Airtel, MTN, Zamtel">Airtel, MTN, Zamtel</option>
@@ -661,12 +622,10 @@
                         </select>
                     </div>
 
-                    <!-- Specialization -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Specialization Teaching</label>
                         <input type="text" id="priSpecialization" placeholder="e.g. Grade 1-4" value="Grade 1-4">
                     </div>
 
-                    <!-- Teacher Sample -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher Sample</label>
                         <input type="text" id="priTeacherSample" placeholder="Name – Role" value="Mwansa K. – HEADTEACHER">
                     </div>
@@ -679,7 +638,6 @@
             <div id="secondaryTab" class="section hidden">
                 <div class="section-title"><i class="fas fa-school"></i> Secondary School Data</div>
                 <div class="form-grid" id="secondaryForm">
-                    <!-- School Info -->
                     <div class="field"><label><i class="fas fa-tag"></i> School Name</label><input type="text" id="secName" placeholder="e.g. Mbala Secondary" style="width:100%;"></div>
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-map-pin"></i> Status</label>
@@ -691,57 +649,33 @@
                         <div class="field"><label><i class="fas fa-hashtag"></i> EMIS</label><input type="text" id="secEmis" value="EMIS-201"></div>
                     </div>
 
-                    <!-- INFRASTRUCTURE - Staff Houses with labels -->
                     <div class="sub-section-title"><i class="fas fa-home"></i> Staff Houses</div>
                     <div class="infra-group">
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Permanent</div>
-                                <input type="number" id="secPermHouses" value="6">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Incomplete</div>
-                                <input type="number" id="secIncompHouses" value="3">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Temporal</div>
-                                <input type="number" id="secTempHouses" value="1">
-                            </div>
+                            <div class="field"><div class="infra-label">Permanent</div><input type="number" id="secPermHouses" value="6"></div>
+                            <div class="field"><div class="infra-label">Incomplete</div><input type="number" id="secIncompHouses" value="3"></div>
+                            <div class="field"><div class="infra-label">Temporal</div><input type="number" id="secTempHouses" value="1"></div>
                         </div>
                     </div>
 
-                    <!-- INFRASTRUCTURE - Classrooms with labels -->
                     <div class="sub-section-title"><i class="fas fa-door-open"></i> Classrooms</div>
                     <div class="infra-group">
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Permanent</div>
-                                <input type="number" id="secPermClass" value="12">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Incomplete</div>
-                                <input type="number" id="secIncompClass" value="2">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Temporal</div>
-                                <input type="number" id="secTempClass" value="1">
-                            </div>
+                            <div class="field"><div class="infra-label">Permanent</div><input type="number" id="secPermClass" value="12"></div>
+                            <div class="field"><div class="infra-label">Incomplete</div><input type="number" id="secIncompClass" value="2"></div>
+                            <div class="field"><div class="infra-label">Temporal</div><input type="number" id="secTempClass" value="1"></div>
                         </div>
                     </div>
 
-                    <!-- Desks -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-chair"></i> Desks Available</label><input type="number" id="secDesks" value="200"></div>
                         <div class="field"><label><i class="fas fa-chair"></i> Shortfall</label><input type="number" id="secDeskShort" value="22"></div>
                     </div>
 
-                    <!-- Enrolment -->
                     <div class="sub-section-title"><i class="fas fa-users"></i> Enrolment (Boys / Girls)</div>
                     <div class="enrolment-group">
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; margin-bottom:4px;">
-                            <div></div>
-                            <div class="gender-label">Boys</div>
-                            <div class="gender-label">Girls</div>
+                            <div></div><div class="gender-label">Boys</div><div class="gender-label">Girls</div>
                         </div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; align-items:center;">
                             <label style="font-size:12px; font-weight:500;">Form 1</label>
@@ -760,7 +694,6 @@
                         </div>
                     </div>
 
-                    <!-- Teachers -->
                     <div class="sub-section-title"><i class="fas fa-user-tie"></i> Teachers</div>
                     <div class="row-2">
                         <div class="field"><label>Male</label><input type="number" id="secMale" value="18"></div>
@@ -771,13 +704,11 @@
                         <div class="field"><label>Shortfall</label><input type="number" id="secTeacherShort" value="4"></div>
                     </div>
 
-                    <!-- Computers -->
                     <div class="row-2">
                         <div class="field"><label><i class="fas fa-laptop"></i> Computers Functional</label><input type="number" id="secCompFunc" value="15"></div>
                         <div class="field"><label><i class="fas fa-laptop"></i> Dysfunctional</label><input type="number" id="secCompDys" value="3"></div>
                     </div>
 
-                    <!-- Water -->
                     <div class="field"><label><i class="fas fa-tint"></i> Water Source</label>
                         <select id="secWater">
                             <option value="Piped">Piped</option>
@@ -789,25 +720,14 @@
                         </select>
                     </div>
 
-                    <!-- Toilets -->
                     <div class="field"><label><i class="fas fa-restroom"></i> Toilets</label>
                         <div class="row-3">
-                            <div class="field">
-                                <div class="infra-label">Double VIP</div>
-                                <input type="number" id="secVip" value="6">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Single VIP</div>
-                                <input type="number" id="secSingleVip" value="8">
-                            </div>
-                            <div class="field">
-                                <div class="infra-label">Pit Latrines</div>
-                                <input type="number" id="secPit" value="4">
-                            </div>
+                            <div class="field"><div class="infra-label">Double VIP</div><input type="number" id="secVip" value="6"></div>
+                            <div class="field"><div class="infra-label">Single VIP</div><input type="number" id="secSingleVip" value="8"></div>
+                            <div class="field"><div class="infra-label">Pit Latrines</div><input type="number" id="secPit" value="4"></div>
                         </div>
                     </div>
 
-                    <!-- Mobile Network -->
                     <div class="field"><label><i class="fas fa-signal"></i> Mobile Network</label>
                         <select id="secMobile">
                             <option value="Airtel, MTN, Zamtel">Airtel, MTN, Zamtel</option>
@@ -817,7 +737,6 @@
                         </select>
                     </div>
 
-                    <!-- Teacher Sample -->
                     <div class="field"><label><i class="fas fa-user-graduate"></i> Teacher Sample</label>
                         <input type="text" id="secTeacherSample" placeholder="Name – Role" value="B. Chanda – HEADTEACHER">
                     </div>
@@ -946,61 +865,92 @@
             });
 
             // =============================================
-            // SECURE LOGIN
+            // SECURE LOGIN - FIXED with better error handling
             // =============================================
             adminLoginBtn.addEventListener('click', async function() {
                 const password = adminPassInput.value.trim();
+                
+                // Validate password is entered
                 if (!password) {
                     loginError.textContent = '❌ Please enter a password';
                     loginError.classList.add('show');
                     return;
                 }
 
+                // Show loading state
                 loginLoading.classList.add('show');
                 loginError.classList.remove('show');
                 adminLoginBtn.disabled = true;
+                adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
                 try {
+                    // First check if supabase is connected
+                    if (!supabaseClient) {
+                        if (!initSupabase()) {
+                            loginError.textContent = '❌ Database connection failed';
+                            loginError.classList.add('show');
+                            loginLoading.classList.remove('show');
+                            adminLoginBtn.disabled = false;
+                            adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                            return;
+                        }
+                    }
+
+                    // Query the admins table
                     const { data, error } = await supabaseClient
                         .from('admins')
                         .select('password_hash')
                         .eq('username', 'admin')
-                        .single();
+                        .maybeSingle(); // Use maybeSingle to handle no rows gracefully
 
+                    // Check for errors
                     if (error) {
                         console.error('Error fetching admin:', error);
-                        loginError.textContent = '❌ Authentication error';
+                        loginError.textContent = '❌ Database error: ' + error.message;
                         loginError.classList.add('show');
                         loginLoading.classList.remove('show');
                         adminLoginBtn.disabled = false;
+                        adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                         return;
                     }
 
+                    // Check if admin exists
                     if (!data) {
-                        loginError.textContent = '❌ Admin account not found';
+                        loginError.textContent = '❌ Admin account not found. Please contact support.';
                         loginError.classList.add('show');
                         loginLoading.classList.remove('show');
                         adminLoginBtn.disabled = false;
+                        adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                         return;
                     }
 
-                    const isValid = await bcrypt.compare(password, data.password_hash);
-
-                    if (isValid) {
-                        isLoggedIn = true;
-                        loginError.classList.remove('show');
-                        adminLoginSection.style.display = 'none';
-                        adminContent.style.display = 'block';
-                        sessionStorage.setItem('adminLogged', 'true');
-                        loadAdminData();
-                        showToast('✅ Admin access granted');
-                        adminPassInput.value = '';
-                    } else {
-                        loginError.textContent = '❌ Invalid password';
+                    // Verify password using bcrypt
+                    try {
+                        const isValid = await bcrypt.compare(password, data.password_hash);
+                        
+                        if (isValid) {
+                            // Login successful
+                            isLoggedIn = true;
+                            loginError.classList.remove('show');
+                            adminLoginSection.style.display = 'none';
+                            adminContent.style.display = 'block';
+                            sessionStorage.setItem('adminLogged', 'true');
+                            loadAdminData();
+                            showToast('✅ Admin access granted');
+                            adminPassInput.value = '';
+                        } else {
+                            // Invalid password
+                            loginError.textContent = '❌ Invalid password. Please try again.';
+                            loginError.classList.add('show');
+                            adminPassInput.value = '';
+                            adminPassInput.focus();
+                        }
+                    } catch (bcryptError) {
+                        console.error('Bcrypt error:', bcryptError);
+                        loginError.textContent = '❌ Password verification error';
                         loginError.classList.add('show');
-                        adminPassInput.value = '';
-                        adminPassInput.focus();
                     }
+
                 } catch (err) {
                     console.error('Login error:', err);
                     loginError.textContent = '❌ Login error: ' + err.message;
@@ -1008,11 +958,15 @@
                 } finally {
                     loginLoading.classList.remove('show');
                     adminLoginBtn.disabled = false;
+                    adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
                 }
             });
 
             adminPassInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') adminLoginBtn.click();
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    adminLoginBtn.click();
+                }
             });
 
             adminLogoutBtn.addEventListener('click', function() {
@@ -1487,6 +1441,8 @@
             }
 
             console.log('✅ MBALA app ready');
+            console.log('🔒 Use username: admin');
+            console.log('🔒 Default password: mbala2025');
         })();
     </script>
 </body>
