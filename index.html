@@ -831,7 +831,7 @@
             });
 
             // =============================================
-            // SECURE LOGIN - Verifies against Supabase
+            // SECURE LOGIN
             // =============================================
             adminLoginBtn.addEventListener('click', async function() {
                 const password = adminPassInput.value.trim();
@@ -911,7 +911,7 @@
             });
 
             // =============================================
-            // DELETE FUNCTION - FIXED
+            // DELETE FUNCTION - FIXED using event delegation
             // =============================================
             async function deleteRecord(id) {
                 console.log('🗑️ Delete function called with ID:', id);
@@ -949,11 +949,8 @@
                 }
             }
 
-            // Make deleteRecord globally accessible for onclick
-            window.deleteRecord = deleteRecord;
-
             // =============================================
-            // LOAD ADMIN DATA
+            // LOAD ADMIN DATA with Event Delegation for Delete
             // =============================================
             async function loadAdminData() {
                 if (!isLoggedIn) {
@@ -984,7 +981,7 @@
                     data.forEach((row) => {
                         const type = row.school_type || 'primary';
                         const typeLabel = type === 'primary' ? '🏫 Primary' : '🏛️ Secondary';
-                        html += `<div class="admin-item">
+                        html += `<div class="admin-item" data-id="${row.id}">
                             <div class="top-row">
                                 <span><i class="fas fa-school" style="margin-right:6px;"></i>${row.school_name || 'N/A'}</span>
                                 <span class="school-type">${typeLabel}</span>
@@ -999,7 +996,7 @@
                             </div>
                             <div class="timestamp">
                                 <span><i class="far fa-calendar-alt"></i> ${row.created_at ? new Date(row.created_at).toLocaleString() : ''}</span>
-                                <button class="delete-btn" onclick="window.deleteRecord(${row.id})"><i class="fas fa-trash"></i> Delete</button>
+                                <button class="delete-btn" data-id="${row.id}"><i class="fas fa-trash"></i> Delete</button>
                             </div>
                         </div>`;
                     });
@@ -1010,6 +1007,38 @@
                     console.error(err);
                 }
             }
+
+            // =============================================
+            // EVENT DELEGATION - Handle delete button clicks
+            // =============================================
+            document.addEventListener('click', function(e) {
+                // Check if the clicked element or its parent is a delete button
+                const deleteBtn = e.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = parseInt(deleteBtn.getAttribute('data-id'));
+                    if (id) {
+                        deleteRecord(id);
+                    } else {
+                        console.error('No ID found on delete button');
+                        showToast('❌ Error: Could not find record ID');
+                    }
+                }
+            });
+
+            // Also handle clicks on adminList specifically (for dynamic content)
+            adminList.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = parseInt(deleteBtn.getAttribute('data-id'));
+                    if (id) {
+                        deleteRecord(id);
+                    }
+                }
+            });
 
             refreshBtn.addEventListener('click', function() {
                 if (isLoggedIn) {
