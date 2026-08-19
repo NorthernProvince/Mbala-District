@@ -285,12 +285,6 @@
             background: #d4a017;
             border-color: #d4a017;
         }
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            margin: 0;
-            width: auto;
-        }
         .btn-report {
             background: #c0392b;
             border-color: #c0392b;
@@ -709,7 +703,7 @@
         }
         .report-container {
             background: white;
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
             max-height: 95vh;
             overflow-y: auto;
@@ -813,26 +807,31 @@
         .report-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
-            min-width: 700px;
+            font-size: 11px;
+            min-width: 900px;
         }
         .report-table thead {
             background: #1a2b4a;
             color: white;
         }
         .report-table th {
-            padding: 10px 12px;
+            padding: 8px 10px;
             text-align: left;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             white-space: nowrap;
         }
         .report-table td {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-bottom: 1px solid #eef2f7;
             vertical-align: top;
+            font-size: 10px;
+        }
+        .report-table td small {
+            font-size: 9px;
+            color: #666;
         }
         .report-table tbody tr:nth-child(even) {
             background: #f8faff;
@@ -888,31 +887,6 @@
             font-size: 11px;
             color: #7a8fa8;
         }
-        /* Badge colors in report */
-        .badge-primary {
-            background: #1a2b4a20;
-            color: #1a2b4a;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .badge-secondary {
-            background: #1a6fb020;
-            color: #1a6fb0;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .badge-teacher {
-            background: #6a1b9a20;
-            color: #6a1b9a;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
         /* Report Print Styles */
         @media print {
             .report-overlay {
@@ -923,28 +897,32 @@
             .report-container {
                 max-height: none;
                 border-radius: 0;
-                padding: 20px;
+                padding: 15px;
                 box-shadow: none;
             }
             .report-close-btn {
                 display: none !important;
             }
             .report-table {
-                font-size: 10px;
+                font-size: 9px;
                 min-width: auto;
             }
             .report-table th {
-                font-size: 9px;
-                padding: 6px 8px;
+                font-size: 8px;
+                padding: 4px 6px;
             }
             .report-table td {
-                padding: 5px 8px;
+                padding: 3px 6px;
+                font-size: 8px;
+            }
+            .report-table td small {
+                font-size: 7px;
             }
             .report-header h1 {
-                font-size: 18px;
+                font-size: 16px;
             }
             .report-header h2 {
-                font-size: 14px;
+                font-size: 12px;
             }
             body {
                 background: white;
@@ -961,6 +939,13 @@
             .report-overlay {
                 display: block !important;
             }
+            .report-meta {
+                grid-template-columns: 1fr 1fr 1fr;
+                padding: 10px 15px;
+            }
+            .report-meta-item .value {
+                font-size: 14px;
+            }
         }
         @media (max-width: 768px) {
             .report-container {
@@ -973,16 +958,44 @@
                 font-size: 18px;
             }
             .report-table {
-                font-size: 10px;
-                min-width: 500px;
+                font-size: 9px;
+                min-width: 700px;
+            }
+            .report-table th {
+                font-size: 8px;
+                padding: 5px 6px;
+            }
+            .report-table td {
+                font-size: 8px;
+                padding: 4px 6px;
+            }
+            .report-table td small {
+                font-size: 7px;
             }
         }
         @media (max-width: 480px) {
             .report-meta {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                padding: 10px;
             }
             .report-container {
                 padding: 10px;
+            }
+            .report-table {
+                font-size: 8px;
+                min-width: 600px;
+            }
+            .report-table th {
+                font-size: 7px;
+                padding: 4px 4px;
+            }
+            .report-table td {
+                font-size: 7px;
+                padding: 3px 4px;
+            }
+            .report-table td small {
+                font-size: 6px;
             }
         }
     </style>
@@ -2255,7 +2268,9 @@
                     </div>
                 `;
 
+                // =============================================
                 // PRIMARY SCHOOLS TABLE
+                // =============================================
                 if (primaryData.length > 0) {
                     html += `
                         <div class="report-section-title"><i class="fas fa-chalkboard-teacher"></i> PRIMARY SCHOOLS DATA</div>
@@ -2291,15 +2306,14 @@
                             </tr>
                         `;
                     });
-                    // Totals row
                     html += `
-                                <tr class="totals-row">
-                                    <td colspan="5" style="text-align:right; font-weight:700;">TOTALS</td>
-                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${primaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
-                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
-                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
-                                    <td></td>
-                                </tr>
+                                    <tr class="totals-row">
+                                        <td colspan="5" style="text-align:right; font-weight:700;">TOTALS</td>
+                                        <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${primaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
+                                        <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
+                                        <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
+                                        <td></td>
+                                    </tr>
                     `;
                     html += `
                                 </tbody>
@@ -2308,7 +2322,9 @@
                     `;
                 }
 
-                // SECONDARY SCHOOLS TABLE
+                // =============================================
+                // SECONDARY SCHOOLS TABLE - COMPREHENSIVE
+                // =============================================
                 if (secondaryData.length > 0) {
                     html += `
                         <div class="report-section-title"><i class="fas fa-school"></i> SECONDARY SCHOOLS DATA</div>
@@ -2321,15 +2337,51 @@
                                         <th>Status</th>
                                         <th>Distance</th>
                                         <th>EMIS</th>
+                                        <th>Staff Houses</th>
+                                        <th>Classrooms</th>
+                                        <th>Desks</th>
+                                        <th>Shortfall</th>
+                                        <th>Enrolment (Boys/Girls)</th>
                                         <th>Teachers (M/F)</th>
                                         <th>Total Teachers</th>
-                                        <th>Desks</th>
+                                        <th>Shortfall</th>
+                                        <th>Computers</th>
                                         <th>Water</th>
+                                        <th>Toilets</th>
+                                        <th>Mobile</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                     `;
                     secondaryData.forEach((row, index) => {
+                        const permHouses = row.perm_houses || 0;
+                        const incompHouses = row.incomp_houses || 0;
+                        const tempHouses = row.temp_houses || 0;
+                        const totalHouses = permHouses + incompHouses + tempHouses;
+                        
+                        const permClass = row.perm_class || 0;
+                        const incompClass = row.incomp_class || 0;
+                        const tempClass = row.temp_class || 0;
+                        const totalClass = permClass + incompClass + tempClass;
+                        
+                        const form1Boys = parseInt(row.form1_boys) || 0;
+                        const form1Girls = parseInt(row.form1_girls) || 0;
+                        const grade9Boys = parseInt(row.grade9_boys) || 0;
+                        const grade9Girls = parseInt(row.grade9_girls) || 0;
+                        const grade1012Boys = parseInt(row.grade10_12_boys) || 0;
+                        const grade1012Girls = parseInt(row.grade10_12_girls) || 0;
+                        const totalBoys = form1Boys + grade9Boys + grade1012Boys;
+                        const totalGirls = form1Girls + grade9Girls + grade1012Girls;
+                        
+                        const compFunc = row.comp_func || 0;
+                        const compDys = row.comp_dys || 0;
+                        const totalComp = compFunc + compDys;
+                        
+                        const vip = row.vip_latrines || 0;
+                        const singleVip = row.single_vip || 0;
+                        const pit = row.pit_latrines || 0;
+                        const totalToilets = vip + singleVip + pit;
+                        
                         html += `
                             <tr>
                                 <td>${index + 1}</td>
@@ -2337,21 +2389,39 @@
                                 <td>${row.status || '-'}</td>
                                 <td>${row.distance || 0} km</td>
                                 <td>${row.emis || '-'}</td>
+                                <td>${totalHouses} <small>(P:${permHouses} I:${incompHouses} T:${tempHouses})</small></td>
+                                <td>${totalClass} <small>(P:${permClass} I:${incompClass} T:${tempClass})</small></td>
+                                <td>${row.desks || 0}</td>
+                                <td>${row.desk_shortfall || 0}</td>
+                                <td>${totalBoys}/${totalGirls}<br><small>F1:${form1Boys}/${form1Girls} F2:${grade9Boys}/${grade9Girls} 10-12:${grade1012Boys}/${grade1012Girls}</small></td>
                                 <td>${row.male_teachers || 0}/${row.female_teachers || 0}</td>
                                 <td>${row.total_teachers || 0}</td>
-                                <td>${row.desks || 0}</td>
+                                <td>${row.teacher_shortfall || 0}</td>
+                                <td>${totalComp} <small>(F:${compFunc} D:${compDys})</small></td>
                                 <td>${row.water || '-'}</td>
+                                <td>${totalToilets} <small>(VIP:${vip} S:${singleVip} P:${pit})</small></td>
+                                <td>${row.mobile_network || '-'}</td>
                             </tr>
                         `;
                     });
+                    // Totals row for secondary
                     html += `
-                                <tr class="totals-row">
-                                    <td colspan="5" style="text-align:right; font-weight:700;">TOTALS</td>
-                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${secondaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
-                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
-                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
-                                    <td></td>
-                                </tr>
+                                    <tr class="totals-row">
+                                        <td colspan="4" style="text-align:right; font-weight:700;">TOTALS</td>
+                                        <td></td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.perm_houses) || 0) + (parseInt(r.incomp_houses) || 0) + (parseInt(r.temp_houses) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.perm_class) || 0) + (parseInt(r.incomp_class) || 0) + (parseInt(r.temp_class) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.desk_shortfall) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.form1_boys) || 0) + (parseInt(r.grade9_boys) || 0) + (parseInt(r.grade10_12_boys) || 0), 0)}/${secondaryData.reduce((sum, r) => sum + (parseInt(r.form1_girls) || 0) + (parseInt(r.grade9_girls) || 0) + (parseInt(r.grade10_12_girls) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${secondaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.teacher_shortfall) || 0), 0)}</td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.comp_func) || 0) + (parseInt(r.comp_dys) || 0), 0)}</td>
+                                        <td></td>
+                                        <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.vip_latrines) || 0) + (parseInt(r.single_vip) || 0) + (parseInt(r.pit_latrines) || 0), 0)}</td>
+                                        <td></td>
+                                    </tr>
                     `;
                     html += `
                                 </tbody>
@@ -2360,7 +2430,9 @@
                     `;
                 }
 
+                // =============================================
                 // TEACHERS PER SUBJECT
+                // =============================================
                 if (teacherData.length > 0) {
                     html += `
                         <div class="report-section-title"><i class="fas fa-users"></i> TEACHERS PER SUBJECT DATA</div>
@@ -2399,9 +2471,49 @@
                             </table>
                         </div>
                     `;
+
+                    // =============================================
+                    // DETAILED SUBJECT BREAKDOWN
+                    // =============================================
+                    const firstRecord = teacherData[0];
+                    const subjectKeys = Object.keys(firstRecord).filter(k => k.startsWith('t_') && k.endsWith('_req'));
+                    const subjectNames = subjectKeys.map(k => {
+                        const name = k.replace('t_', '').replace('_req', '');
+                        return name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    });
+
+                    html += `
+                        <div class="report-section-title"><i class="fas fa-list"></i> DETAILED SUBJECT BREAKDOWN</div>
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>School Name</th>
+                                        ${subjectNames.map(name => `<th>${name}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    teacherData.forEach((row) => {
+                        html += `<tr><td><strong>${row.school_name || 'N/A'}</strong></td>`;
+                        subjectKeys.forEach(key => {
+                            const req = parseInt(row[key]) || 0;
+                            const avail = parseInt(row[key.replace('_req', '_avail')]) || 0;
+                            const short = parseInt(row[key.replace('_req', '_short')]) || 0;
+                            html += `<td>${req}/${avail} <small>(${short})</small></td>`;
+                        });
+                        html += `</tr>`;
+                    });
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
                 }
 
-                // Footer with signatures
+                // =============================================
+                // FOOTER WITH SIGNATURES
+                // =============================================
                 html += `
                     <div class="report-footer">
                         <p><i class="fas fa-print"></i> This report is computer generated and does not require a signature.</p>
