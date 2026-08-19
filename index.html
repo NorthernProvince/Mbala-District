@@ -599,6 +599,42 @@
         .part-b-section .section-title i {
             color: #6a1b9a;
         }
+        .part-b-district-bar {
+            background: #f0ebf5;
+            border: 1px solid #d4c4e0;
+            border-radius: 20px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        .part-b-district-bar label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4a148c;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .part-b-district-bar select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid #d4c4e0;
+            background: white;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a2b4a;
+            outline: none;
+        }
+        .part-b-district-bar select:focus {
+            border-color: #6a1b9a;
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+        }
+        .part-b-note {
+            font-size: 11px;
+            color: #7a5a8a;
+            margin-top: 6px;
+        }
         @media (max-width: 480px) {
             .row-2 {
                 grid-template-columns: 1fr;
@@ -927,7 +963,16 @@
                         <div class="section-title" style="border-left-color: #6a1b9a; color: #4a148c;">
                             <i class="fas fa-users" style="color: #6a1b9a;"></i> B. Data on Teachers Per Subject - 2025
                         </div>
-                        
+
+                        <!-- Part B District Selector -->
+                        <div class="part-b-district-bar">
+                            <label><i class="fas fa-map-marked-alt" style="color: #6a1b9a;"></i> Part B - District</label>
+                            <select id="partBDistrictSelect">
+                                <option value="">-- Select District --</option>
+                            </select>
+                            <div class="part-b-note">Select district to load schools for teacher subject data.</div>
+                        </div>
+
                         <div class="field">
                             <label><i class="fas fa-tag"></i> School Name</label>
                             <select id="teacherSchool" disabled>
@@ -1258,6 +1303,8 @@
             function populateDistrictDropdowns() {
                 const districtSelect = document.getElementById('districtSelect');
                 const adminDistrictSelect = document.getElementById('adminDistrictSelect');
+                const partBDistrictSelect = document.getElementById('partBDistrictSelect');
+                
                 districts.forEach(d => {
                     const opt1 = document.createElement('option');
                     opt1.value = d;
@@ -1268,6 +1315,11 @@
                     opt2.value = d;
                     opt2.textContent = d;
                     adminDistrictSelect.appendChild(opt2);
+                    
+                    const opt3 = document.createElement('option');
+                    opt3.value = d;
+                    opt3.textContent = d;
+                    partBDistrictSelect.appendChild(opt3);
                 });
             }
 
@@ -1287,6 +1339,7 @@
             const secondaryTab = document.getElementById('secondaryTab');
             const tabBtns = document.querySelectorAll('.tab');
             const districtSelect = document.getElementById('districtSelect');
+            const partBDistrictSelect = document.getElementById('partBDistrictSelect');
             const priNameSelect = document.getElementById('priName');
             const secNameSelect = document.getElementById('secName');
             const teacherSchoolSelect = document.getElementById('teacherSchool');
@@ -1402,10 +1455,69 @@
                 }
             }
 
+            // =============================================
+            // PART B SCHOOL LISTS - using Part B district selector
+            // =============================================
+            async function loadPartBSchoolOptions() {
+                const district = partBDistrictSelect.value;
+                const selectEl = teacherSchoolSelect;
+
+                if (!district) {
+                    selectEl.innerHTML = '<option value="">-- Select District First --</option>';
+                    selectEl.disabled = true;
+                    return;
+                }
+
+                selectEl.disabled = false;
+                selectEl.innerHTML = `<option value="">Loading schools...</option>`;
+
+                if (!supabaseClient) {
+                    if (!initSupabase()) {
+                        selectEl.innerHTML = '<option value="">-- Connection error --</option>';
+                        return;
+                    }
+                }
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('schools')
+                        .select('name, distance, emis')
+                        .eq('district', district)
+                        .eq('school_type', 'secondary')
+                        .order('name');
+
+                    if (error) throw error;
+
+                    selectEl.innerHTML = `<option value="">-- Select Secondary School --</option>`;
+
+                    if (!data || data.length === 0) {
+                        selectEl.innerHTML += `<option value="" disabled>No schools loaded yet for ${district}</option>`;
+                        return;
+                    }
+
+                    data.forEach(school => {
+                        const option = document.createElement('option');
+                        option.value = school.name;
+                        option.textContent = school.name;
+                        selectEl.appendChild(option);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    selectEl.innerHTML = '<option value="">-- Error loading schools --</option>';
+                    showToast('❌ Error loading schools: ' + err.message);
+                }
+            }
+
+            // Main district selector change
             districtSelect.addEventListener('change', function() {
                 loadSchoolOptions('primary');
                 loadSchoolOptions('secondary');
-                loadSchoolOptions('teacher');
+                // Don't load teacher schools here - they use their own district selector
+            });
+
+            // Part B district selector change
+            partBDistrictSelect.addEventListener('change', function() {
+                loadPartBSchoolOptions();
             });
 
             // =============================================
@@ -1629,7 +1741,10 @@
                     let html = '';
                     data.forEach((row) => {
                         const type = row.school_type || 'primary';
-                        const typeLabel = type === 'primary' ? '🏫 Primary' : '🏛️ Secondary';
+                        let typeLabel = '🏫 Primary';
+                        if (type === 'secondary') typeLabel = '🏛️ Secondary';
+                        else if (type === 'teacher_subject') typeLabel = '👨‍🏫 Teachers/Subject';
+                        
                         html += `<div class="admin-item" data-id="${row.id}">
                             <div class="top-row">
                                 <span><i class="fas fa-school" style="margin-right:6px;"></i>${row.school_name || 'N/A'}</span>
@@ -1690,6 +1805,7 @@
 
                     const primaryData = data.filter(row => row.school_type === 'primary');
                     const secondaryData = data.filter(row => row.school_type === 'secondary');
+                    const teacherData = data.filter(row => row.school_type === 'teacher_subject');
 
                     const wb = XLSX.utils.book_new();
 
@@ -1856,6 +1972,108 @@
                         XLSX.utils.book_append_sheet(wb, ws, 'Sheet 2 - Secondary');
                     }
 
+                    // TEACHER SUBJECT SHEET
+                    if (teacherData.length > 0) {
+                        const teacherHeaders = [
+                            'S/NO', 'DISTRICT', 'SCHOOL NAME',
+                            'Add Math Required', 'Add Math Available', 'Add Math Shortfall',
+                            'Agri Science Required', 'Agri Science Available', 'Agri Science Shortfall',
+                            'Art & Design Required', 'Art & Design Available', 'Art & Design Shortfall',
+                            'Biology Required', 'Biology Available', 'Biology Shortfall',
+                            'Chemistry Required', 'Chemistry Available', 'Chemistry Shortfall',
+                            'Civic Education Required', 'Civic Education Available', 'Civic Education Shortfall',
+                            'Commerce Required', 'Commerce Available', 'Commerce Shortfall',
+                            'Computer Studies Required', 'Computer Studies Available', 'Computer Studies Shortfall',
+                            'Design & Tech Required', 'Design & Tech Available', 'Design & Tech Shortfall',
+                            'English Required', 'English Available', 'English Shortfall',
+                            'Fashion Required', 'Fashion Available', 'Fashion Shortfall',
+                            'Food & Nutrition Required', 'Food & Nutrition Available', 'Food & Nutrition Shortfall',
+                            'Geography Required', 'Geography Available', 'Geography Shortfall',
+                            'History Required', 'History Available', 'History Shortfall',
+                            'Home Management Required', 'Home Management Available', 'Home Management Shortfall',
+                            'Zambian Languages Required', 'Zambian Languages Available', 'Zambian Languages Shortfall',
+                            'Literature Required', 'Literature Available', 'Literature Shortfall',
+                            'Mathematics Required', 'Mathematics Available', 'Mathematics Shortfall',
+                            'Music Required', 'Music Available', 'Music Shortfall',
+                            'Physics Required', 'Physics Available', 'Physics Shortfall',
+                            'PE Required', 'PE Available', 'PE Shortfall',
+                            'Accounts Required', 'Accounts Available', 'Accounts Shortfall',
+                            'RE Required', 'RE Available', 'RE Shortfall',
+                            'Science Required', 'Science Available', 'Science Shortfall',
+                            'Social Studies Required', 'Social Studies Available', 'Social Studies Shortfall',
+                            'Business Studies Required', 'Business Studies Available', 'Business Studies Shortfall'
+                        ];
+
+                        const teacherFieldMap = [
+                            'district', 'school_name',
+                            't_math_req', 't_math_avail', 't_math_short',
+                            't_agri_req', 't_agri_avail', 't_agri_short',
+                            't_art_req', 't_art_avail', 't_art_short',
+                            't_bio_req', 't_bio_avail', 't_bio_short',
+                            't_chem_req', 't_chem_avail', 't_chem_short',
+                            't_civic_req', 't_civic_avail', 't_civic_short',
+                            't_commerce_req', 't_commerce_avail', 't_commerce_short',
+                            't_comp_req', 't_comp_avail', 't_comp_short',
+                            't_design_req', 't_design_avail', 't_design_short',
+                            't_eng_req', 't_eng_avail', 't_eng_short',
+                            't_fashion_req', 't_fashion_avail', 't_fashion_short',
+                            't_food_req', 't_food_avail', 't_food_short',
+                            't_geo_req', 't_geo_avail', 't_geo_short',
+                            't_hist_req', 't_hist_avail', 't_hist_short',
+                            't_home_req', 't_home_avail', 't_home_short',
+                            't_zam_lang_req', 't_zam_lang_avail', 't_zam_lang_short',
+                            't_lit_req', 't_lit_avail', 't_lit_short',
+                            't_maths_req', 't_maths_avail', 't_maths_short',
+                            't_music_req', 't_music_avail', 't_music_short',
+                            't_phys_req', 't_phys_avail', 't_phys_short',
+                            't_pe_req', 't_pe_avail', 't_pe_short',
+                            't_accounts_req', 't_accounts_avail', 't_accounts_short',
+                            't_re_req', 't_re_avail', 't_re_short',
+                            't_science_req', 't_science_avail', 't_science_short',
+                            't_social_req', 't_social_avail', 't_social_short',
+                            't_business_req', 't_business_avail', 't_business_short'
+                        ];
+
+                        const teacherRows = teacherData.map((row, index) => {
+                            const rowData = [index + 1];
+                            teacherFieldMap.forEach(field => {
+                                rowData.push(row[field] !== undefined ? row[field] : (typeof row[field] === 'number' ? 0 :
+                                    ''));
+                            });
+                            return rowData;
+                        });
+
+                        const wsData = [
+                            [`${loggedInDistrict.toUpperCase()} DISTRICT EDUCATION BOARD`],
+                            ['DATA ON TEACHERS PER SUBJECT - 2025'],
+                            [''],
+                            teacherHeaders,
+                            ...teacherRows
+                        ];
+
+                        const ws = XLSX.utils.aoa_to_sheet(wsData);
+                        ws['!cols'] = teacherHeaders.map((h, i) => {
+                            let width = 12;
+                            if (i < 3) width = 20;
+                            if (i > 3 && i % 3 === 1) width = 14;
+                            return { wch: width };
+                        });
+                        ws['!merges'] = [
+                            { s: { r: 0, c: 0 }, e: { r: 0, c: teacherHeaders.length - 1 } },
+                            { s: { r: 1, c: 0 }, e: { r: 1, c: teacherHeaders.length - 1 } }
+                        ];
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 3 - Teachers Per Subject');
+                    } else {
+                        const wsData = [
+                            [`${loggedInDistrict.toUpperCase()} DISTRICT EDUCATION BOARD`],
+                            ['DATA ON TEACHERS PER SUBJECT - 2025'],
+                            [''],
+                            ['No teacher subject data available']
+                        ];
+                        const ws = XLSX.utils.aoa_to_sheet(wsData);
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet 3 - Teachers Per Subject');
+                    }
+
                     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
                     const blob = new Blob([wbout], { type: 'application/octet-stream' });
                     const link = document.createElement('a');
@@ -1864,7 +2082,7 @@
                         `${loggedInDistrict}_School_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
                     link.click();
                     URL.revokeObjectURL(link.href);
-                    showToast('✅ Excel exported with 2 sheets');
+                    showToast('✅ Excel exported with 3 sheets (Primary, Secondary, Teachers/Subject)');
 
                 } catch (err) {
                     showToast('❌ Export error: ' + err.message);
@@ -2012,9 +2230,9 @@
             // SUBMIT TEACHERS PER SUBJECT (PART B)
             // =============================================
             document.getElementById('submitTeacherBtn').addEventListener('click', async function() {
-                const district = districtSelect.value;
+                const district = partBDistrictSelect.value;
                 if (!district) {
-                    showToast('⚠️ Please select your district first');
+                    showToast('⚠️ Please select your district in Part B first');
                     return;
                 }
                 if (!teacherSchoolSelect.value) {
@@ -2177,57 +2395,31 @@
 
                     const headers = [
                         'S/NO', 'DISTRICT', 'SCHOOL NAME',
-                        // Additional Mathematics
                         'Add Math Required', 'Add Math Available', 'Add Math Shortfall',
-                        // Agricultural Science
                         'Agri Science Required', 'Agri Science Available', 'Agri Science Shortfall',
-                        // Art & Design
                         'Art & Design Required', 'Art & Design Available', 'Art & Design Shortfall',
-                        // Biology
                         'Biology Required', 'Biology Available', 'Biology Shortfall',
-                        // Chemistry
                         'Chemistry Required', 'Chemistry Available', 'Chemistry Shortfall',
-                        // Civic Education
                         'Civic Education Required', 'Civic Education Available', 'Civic Education Shortfall',
-                        // Commerce
                         'Commerce Required', 'Commerce Available', 'Commerce Shortfall',
-                        // Computer Studies
                         'Computer Studies Required', 'Computer Studies Available', 'Computer Studies Shortfall',
-                        // Design & Technology
                         'Design & Tech Required', 'Design & Tech Available', 'Design & Tech Shortfall',
-                        // English Language
                         'English Required', 'English Available', 'English Shortfall',
-                        // Fashion and Fabrics
                         'Fashion Required', 'Fashion Available', 'Fashion Shortfall',
-                        // Food & Nutrition
                         'Food & Nutrition Required', 'Food & Nutrition Available', 'Food & Nutrition Shortfall',
-                        // Geography
                         'Geography Required', 'Geography Available', 'Geography Shortfall',
-                        // History
                         'History Required', 'History Available', 'History Shortfall',
-                        // Home Management
                         'Home Management Required', 'Home Management Available', 'Home Management Shortfall',
-                        // Zambian Languages
                         'Zambian Languages Required', 'Zambian Languages Available', 'Zambian Languages Shortfall',
-                        // Literature in English
                         'Literature Required', 'Literature Available', 'Literature Shortfall',
-                        // Mathematics
                         'Mathematics Required', 'Mathematics Available', 'Mathematics Shortfall',
-                        // Musical Art Education
                         'Music Required', 'Music Available', 'Music Shortfall',
-                        // Physics
                         'Physics Required', 'Physics Available', 'Physics Shortfall',
-                        // Physical Education
                         'PE Required', 'PE Available', 'PE Shortfall',
-                        // Principles of Accounts
                         'Accounts Required', 'Accounts Available', 'Accounts Shortfall',
-                        // Religious Education
                         'RE Required', 'RE Available', 'RE Shortfall',
-                        // Science
                         'Science Required', 'Science Available', 'Science Shortfall',
-                        // Social Studies
                         'Social Studies Required', 'Social Studies Available', 'Social Studies Shortfall',
-                        // Business Studies
                         'Business Studies Required', 'Business Studies Available', 'Business Studies Shortfall'
                     ];
 
