@@ -9,6 +9,7 @@
     </script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             margin: 0;
@@ -168,14 +169,6 @@
             border-left: 4px solid #1a2b4a;
             padding-left: 12px;
         }
-        .section-title-sm {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0b1a30;
-            margin-bottom: 10px;
-            border-left: 4px solid #1a2b4a;
-            padding-left: 10px;
-        }
         .form-grid {
             display: flex;
             flex-direction: column;
@@ -223,10 +216,6 @@
             width: 100%;
             text-align: center;
         }
-        .field select option {
-            padding: 8px;
-            font-size: 13px;
-        }
         .field select:disabled,
         .field input:disabled {
             opacity: 0.55;
@@ -241,11 +230,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-        }
-        .row-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
         }
         .btn {
             background: #1a2b4a;
@@ -300,13 +284,12 @@
             background: #1a6fb0;
             border-color: #1a6fb0;
         }
-        .btn-teacher {
-            background: #6a1b9a;
-            border-color: #6a1b9a;
-            margin-top: 6px;
+        .btn-report {
+            background: #2e7d32;
+            border-color: #2e7d32;
         }
-        .btn-teacher:hover {
-            background: #4a148c;
+        .btn-report:hover {
+            background: #1b5e20;
         }
         .toast {
             background: #1e2f47;
@@ -635,41 +618,107 @@
             color: #7a5a8a;
             margin-top: 6px;
         }
-        /* Admin login status */
-        .login-status {
+        /* Report styles */
+        #reportContainer {
             display: none;
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin-bottom: 12px;
+        }
+        .report-content {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            padding: 20px;
+            background: white;
+        }
+        .report-content .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1a2b4a;
+            padding-bottom: 15px;
+        }
+        .report-content .report-header .logo {
+            width: 60px;
+            height: 60px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .report-content .report-header .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .report-content .report-header h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2b4a;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 2px;
+        }
+        .report-content .report-header h2 {
             font-size: 13px;
-            font-weight: 500;
-            align-items: center;
-            gap: 8px;
+            font-weight: 600;
+            color: #2c405e;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 4px;
         }
-        .login-status.show {
-            display: flex;
+        .report-content .report-header .report-date {
+            font-size: 10px;
+            color: #666;
+            margin-top: 4px;
+            font-family: 'Courier New', Courier, monospace;
         }
-        .login-status.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #a5d6a7;
+        .report-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10px;
         }
-        .login-status.error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
+        .report-content table th {
+            background: #1a2b4a;
+            color: white;
+            padding: 4px 6px;
+            text-align: center;
+            border: 1px solid #1a2b4a;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9px;
+            font-weight: 700;
         }
-        .login-status i {
-            font-size: 18px;
+        .report-content table td {
+            padding: 3px 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 9px;
+        }
+        .report-content table tr:nth-child(even) {
+            background: #f8faff;
+        }
+        .report-content table tr:hover {
+            background: #e8edf5;
+        }
+        .report-content .section-heading {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a2b4a;
+            margin: 15px 0 8px 0;
+            padding: 5px 10px;
+            background: #eef2f7;
+            border-left: 4px solid #1a2b4a;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .report-content .footer {
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
         }
         @media (max-width: 480px) {
             .row-2 {
                 grid-template-columns: 1fr;
             }
             .row-3 {
-                grid-template-columns: 1fr 1fr;
-            }
-            .row-4 {
                 grid-template-columns: 1fr 1fr;
             }
             .app-container {
@@ -865,7 +914,7 @@
                 </div>
             </div>
 
-            <!-- SECONDARY FORM WITH PART B -->
+            <!-- SECONDARY FORM -->
             <div id="secondaryTab" class="section hidden">
                 <div class="section-title"><i class="fas fa-school"></i> Secondary School Data</div>
                 <div class="form-grid" id="secondaryForm">
@@ -981,15 +1030,11 @@
                         <input type="text" id="secTeacherSample" placeholder="Name – Role" value="">
                     </div>
 
-                    <!-- ======================================== -->
-                    <!-- PART B: DATA ON TEACHERS PER SUBJECT - 2025 -->
-                    <!-- ======================================== -->
+                    <!-- PART B -->
                     <div class="part-b-section">
                         <div class="section-title" style="border-left-color: #6a1b9a; color: #4a148c;">
                             <i class="fas fa-users" style="color: #6a1b9a;"></i> B. Data on Teachers Per Subject - 2025
                         </div>
-
-                        <!-- Part B District Selector -->
                         <div class="part-b-district-bar">
                             <label><i class="fas fa-map-marked-alt" style="color: #6a1b9a;"></i> Part B - District</label>
                             <select id="partBDistrictSelect">
@@ -997,17 +1042,14 @@
                             </select>
                             <div class="part-b-note">Select district to load schools for teacher subject data.</div>
                         </div>
-
                         <div class="field">
                             <label><i class="fas fa-tag"></i> School Name</label>
                             <select id="teacherSchool" disabled>
                                 <option value="">-- Select District First --</option>
                             </select>
                         </div>
-
                         <div class="sub-section-title" style="border-left-color: #6a1b9a;"><i class="fas fa-book" style="color: #6a1b9a;"></i> Subject Staffing</div>
                         <div class="scroll-container">
-                            <!-- Additional Mathematics -->
                             <div class="subject-group">
                                 <span class="subject-label">📐 Additional Mathematics</span>
                                 <div class="row-3">
@@ -1016,8 +1058,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_math_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Agricultural Science -->
                             <div class="subject-group">
                                 <span class="subject-label">🌾 Agricultural Science</span>
                                 <div class="row-3">
@@ -1026,8 +1066,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_agri_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Art & Design -->
                             <div class="subject-group">
                                 <span class="subject-label">🎨 Art & Design</span>
                                 <div class="row-3">
@@ -1036,8 +1074,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_art_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Biology -->
                             <div class="subject-group">
                                 <span class="subject-label">🧬 Biology</span>
                                 <div class="row-3">
@@ -1046,8 +1082,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_bio_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Chemistry (Pure) -->
                             <div class="subject-group">
                                 <span class="subject-label">🧪 Chemistry (Pure)</span>
                                 <div class="row-3">
@@ -1056,8 +1090,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_chem_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Civic Education -->
                             <div class="subject-group">
                                 <span class="subject-label">⚖️ Civic Education</span>
                                 <div class="row-3">
@@ -1066,8 +1098,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_civic_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Commerce -->
                             <div class="subject-group">
                                 <span class="subject-label">💼 Commerce</span>
                                 <div class="row-3">
@@ -1076,8 +1106,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_commerce_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Computer Studies -->
                             <div class="subject-group">
                                 <span class="subject-label">💻 Computer Studies</span>
                                 <div class="row-3">
@@ -1086,8 +1114,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_comp_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Design & Technology -->
                             <div class="subject-group">
                                 <span class="subject-label">🔧 Design & Technology</span>
                                 <div class="row-3">
@@ -1096,8 +1122,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_design_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- English Language -->
                             <div class="subject-group">
                                 <span class="subject-label">📖 English Language</span>
                                 <div class="row-3">
@@ -1106,8 +1130,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_eng_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Fashion and Fabrics -->
                             <div class="subject-group">
                                 <span class="subject-label">👗 Fashion and Fabrics</span>
                                 <div class="row-3">
@@ -1116,8 +1138,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_fashion_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Food & Nutrition -->
                             <div class="subject-group">
                                 <span class="subject-label">🍎 Food & Nutrition</span>
                                 <div class="row-3">
@@ -1126,8 +1146,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_food_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Geography -->
                             <div class="subject-group">
                                 <span class="subject-label">🌍 Geography</span>
                                 <div class="row-3">
@@ -1136,8 +1154,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_geo_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- History -->
                             <div class="subject-group">
                                 <span class="subject-label">📜 History</span>
                                 <div class="row-3">
@@ -1146,8 +1162,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_hist_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Home Management -->
                             <div class="subject-group">
                                 <span class="subject-label">🏠 Home Management</span>
                                 <div class="row-3">
@@ -1156,8 +1170,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_home_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Zambian Languages -->
                             <div class="subject-group">
                                 <span class="subject-label">🗣️ Zambian Languages</span>
                                 <div class="row-3">
@@ -1166,8 +1178,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_zam_lang_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Literature in English -->
                             <div class="subject-group">
                                 <span class="subject-label">📚 Literature in English</span>
                                 <div class="row-3">
@@ -1176,8 +1186,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_lit_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Mathematics -->
                             <div class="subject-group">
                                 <span class="subject-label">➗ Mathematics</span>
                                 <div class="row-3">
@@ -1186,8 +1194,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_maths_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Musical Art Education -->
                             <div class="subject-group">
                                 <span class="subject-label">🎵 Musical Art Education</span>
                                 <div class="row-3">
@@ -1196,8 +1202,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_music_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Physics (Pure) -->
                             <div class="subject-group">
                                 <span class="subject-label">⚡ Physics (Pure)</span>
                                 <div class="row-3">
@@ -1206,8 +1210,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_phys_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Physical Education -->
                             <div class="subject-group">
                                 <span class="subject-label">🏃 Physical Education</span>
                                 <div class="row-3">
@@ -1216,8 +1218,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_pe_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Principles of Accounts -->
                             <div class="subject-group">
                                 <span class="subject-label">📊 Principles of Accounts</span>
                                 <div class="row-3">
@@ -1226,8 +1226,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_accounts_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Religious Education -->
                             <div class="subject-group">
                                 <span class="subject-label">⛪ Religious Education</span>
                                 <div class="row-3">
@@ -1236,8 +1234,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_re_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Science -->
                             <div class="subject-group">
                                 <span class="subject-label">🔬 Science</span>
                                 <div class="row-3">
@@ -1246,8 +1242,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_science_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Social Studies -->
                             <div class="subject-group">
                                 <span class="subject-label">🌏 Social Studies</span>
                                 <div class="row-3">
@@ -1256,8 +1250,6 @@
                                     <div class="field"><label>Shortfall</label><input type="number" id="t_social_short" value="0" class="small-input"></div>
                                 </div>
                             </div>
-
-                            <!-- Business Studies -->
                             <div class="subject-group">
                                 <span class="subject-label">💹 Business Studies</span>
                                 <div class="row-3">
@@ -1268,9 +1260,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- END PART B -->
 
-                    <!-- SINGLE SUBMIT BUTTON FOR BOTH SECONDARY AND TEACHER DATA -->
                     <button class="btn btn-success" id="submitSecondaryComplete"><i class="fas fa-cloud-upload-alt"></i> Submit Secondary &amp; Teacher Data</button>
                 </div>
             </div>
@@ -1306,12 +1296,18 @@
                 <div class="admin-actions">
                     <button id="refreshAdminBtn" class="btn btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
                     <button id="exportExcelBtn" class="btn" style="background:#1a2b4a;"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button id="downloadReportBtn" class="btn btn-report"><i class="fas fa-file-pdf"></i> Download Report</button>
                 </div>
                 <div id="adminList" class="admin-list">
                     <p style="color:#7a8fa8; text-align:center; padding:20px 0;">Loading data...</p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- HIDDEN REPORT CONTAINER -->
+    <div id="reportContainer" style="display:none;">
+        <div id="reportContent" class="report-content"></div>
     </div>
 
     <script>
@@ -1378,12 +1374,14 @@
             const adminList = document.getElementById('adminList');
             const refreshBtn = document.getElementById('refreshAdminBtn');
             const exportExcelBtn = document.getElementById('exportExcelBtn');
+            const downloadReportBtn = document.getElementById('downloadReportBtn');
             const loginError = document.getElementById('loginError');
             const loginLoading = document.getElementById('loginLoading');
             const adminLogoutBtn = document.getElementById('adminLogoutBtn');
             const loggedInDistrictLabel = document.getElementById('loggedInDistrictLabel');
             const toastDiv = document.getElementById('globalToast');
             const toastMsg = document.getElementById('toastMsg');
+            const reportContent = document.getElementById('reportContent');
 
             function initSupabase() {
                 try {
@@ -1415,7 +1413,7 @@
             });
 
             // =============================================
-            // SCHOOL LISTS - loaded from Supabase per district
+            // SCHOOL LISTS
             // =============================================
             async function loadSchoolOptions(type) {
                 const district = districtSelect.value;
@@ -1479,9 +1477,6 @@
                 }
             }
 
-            // =============================================
-            // PART B SCHOOL LISTS - using Part B district selector
-            // =============================================
             async function loadPartBSchoolOptions() {
                 const district = partBDistrictSelect.value;
                 const selectEl = teacherSchoolSelect;
@@ -1515,27 +1510,17 @@
                     selectEl.innerHTML = `<option value="">-- Select Secondary School --</option>`;
 
                     if (!data || data.length === 0) {
-                        // Fallback for Mbala
                         if (district === 'Mbala') {
                             const mbalaSchools = [
-                                'Chilubula Secondary School',
-                                'Chungu Secondary School',
-                                'Kaputa Secondary School',
-                                'Kashitu Secondary School',
-                                'Kasompe Secondary School',
-                                'Luwingu Secondary School',
-                                'Mambwe Secondary School',
-                                'Mbesuma Secondary School',
-                                'Mpande Secondary School',
-                                'Mporokoso Secondary School',
-                                'Musenga Secondary School',
-                                'Muyombe Secondary School',
-                                'Nchenachena Secondary School',
-                                'Nkula Secondary School',
-                                'Nsumbu Secondary School',
-                                'Senga Hill Secondary School',
-                                'Sumbu Secondary School',
-                                'Tunduma Secondary School'
+                                'Chilubula Secondary School', 'Chungu Secondary School',
+                                'Kaputa Secondary School', 'Kashitu Secondary School',
+                                'Kasompe Secondary School', 'Luwingu Secondary School',
+                                'Mambwe Secondary School', 'Mbesuma Secondary School',
+                                'Mpande Secondary School', 'Mporokoso Secondary School',
+                                'Musenga Secondary School', 'Muyombe Secondary School',
+                                'Nchenachena Secondary School', 'Nkula Secondary School',
+                                'Nsumbu Secondary School', 'Senga Hill Secondary School',
+                                'Sumbu Secondary School', 'Tunduma Secondary School'
                             ];
                             mbalaSchools.forEach(name => {
                                 const option = document.createElement('option');
@@ -1562,13 +1547,11 @@
                 }
             }
 
-            // Main district selector change
             districtSelect.addEventListener('change', function() {
                 loadSchoolOptions('primary');
                 loadSchoolOptions('secondary');
             });
 
-            // Part B district selector change
             partBDistrictSelect.addEventListener('change', function() {
                 loadPartBSchoolOptions();
             });
@@ -2144,6 +2127,293 @@
             });
 
             // =============================================
+            // DOWNLOAD CONSOLIDATED REPORT (PDF)
+            // =============================================
+            downloadReportBtn.addEventListener('click', async function() {
+                if (!isLoggedIn || !loggedInDistrict) {
+                    showToast('🔒 Please login first');
+                    return;
+                }
+                if (!supabaseClient) {
+                    if (!initSupabase()) {
+                        showToast('⚠️ Connection error');
+                        return;
+                    }
+                }
+
+                showToast('📄 Generating report...');
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('schools_data')
+                        .select('*')
+                        .eq('district', loggedInDistrict)
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    if (!data || data.length === 0) {
+                        showToast('No data to generate report');
+                        return;
+                    }
+
+                    const primaryData = data.filter(row => row.school_type === 'primary');
+                    const secondaryData = data.filter(row => row.school_type === 'secondary');
+                    const teacherData = data.filter(row => row.school_type === 'teacher_subject');
+
+                    let html = `
+                        <div class="report-content">
+                            <div class="report-header">
+                                <div class="logo">
+                                    <img src="image/coat_arms.png" alt="Zambian Coat of Arms">
+                                </div>
+                                <h1>MINISTRY OF EDUCATION</h1>
+                                <h2>${loggedInDistrict.toUpperCase()} DISTRICT - SCHOOL DATA REPORT</h2>
+                                <div class="report-date">Generated: ${new Date().toLocaleString()}</div>
+                            </div>
+                    `;
+
+                    // PRIMARY SCHOOLS
+                    if (primaryData.length > 0) {
+                        html += `
+                            <div class="section-heading">📊 PRIMARY SCHOOLS DATA</div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Status</th>
+                                        <th>Distance</th>
+                                        <th>EMIS</th>
+                                        <th>Perm Houses</th>
+                                        <th>Incomp Houses</th>
+                                        <th>Temp Houses</th>
+                                        <th>Perm Class</th>
+                                        <th>Incomp Class</th>
+                                        <th>Temp Class</th>
+                                        <th>Desks</th>
+                                        <th>Shortfall</th>
+                                        <th>Male Teachers</th>
+                                        <th>Female Teachers</th>
+                                        <th>Total Teachers</th>
+                                        <th>Teacher Shortfall</th>
+                                        <th>Comp Func</th>
+                                        <th>Comp Dys</th>
+                                        <th>Power</th>
+                                        <th>Water</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        primaryData.forEach((row, index) => {
+                            html += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${row.school_name || ''}</td>
+                                    <td>${row.status || ''}</td>
+                                    <td>${row.distance || 0}</td>
+                                    <td>${row.emis || ''}</td>
+                                    <td>${row.perm_houses || 0}</td>
+                                    <td>${row.incomp_houses || 0}</td>
+                                    <td>${row.temp_houses || 0}</td>
+                                    <td>${row.perm_class || 0}</td>
+                                    <td>${row.incomp_class || 0}</td>
+                                    <td>${row.temp_class || 0}</td>
+                                    <td>${row.desks || 0}</td>
+                                    <td>${row.desk_shortfall || 0}</td>
+                                    <td>${row.male_teachers || 0}</td>
+                                    <td>${row.female_teachers || 0}</td>
+                                    <td>${row.total_teachers || 0}</td>
+                                    <td>${row.teacher_shortfall || 0}</td>
+                                    <td>${row.comp_func || 0}</td>
+                                    <td>${row.comp_dys || 0}</td>
+                                    <td>${row.power || ''}</td>
+                                    <td>${row.water || ''}</td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `</tbody></table>`;
+                    }
+
+                    // SECONDARY SCHOOLS
+                    if (secondaryData.length > 0) {
+                        html += `
+                            <div class="section-heading">🏛️ SECONDARY SCHOOLS DATA</div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Status</th>
+                                        <th>Distance</th>
+                                        <th>EMIS</th>
+                                        <th>Perm Houses</th>
+                                        <th>Incomp Houses</th>
+                                        <th>Temp Houses</th>
+                                        <th>Perm Class</th>
+                                        <th>Incomp Class</th>
+                                        <th>Temp Class</th>
+                                        <th>Desks</th>
+                                        <th>Shortfall</th>
+                                        <th>Form1 M</th>
+                                        <th>Form1 F</th>
+                                        <th>Form2 M</th>
+                                        <th>Form2 F</th>
+                                        <th>Gr10-12 M</th>
+                                        <th>Gr10-12 F</th>
+                                        <th>Male Teachers</th>
+                                        <th>Female Teachers</th>
+                                        <th>Water</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        secondaryData.forEach((row, index) => {
+                            html += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${row.school_name || ''}</td>
+                                    <td>${row.status || ''}</td>
+                                    <td>${row.distance || 0}</td>
+                                    <td>${row.emis || ''}</td>
+                                    <td>${row.perm_houses || 0}</td>
+                                    <td>${row.incomp_houses || 0}</td>
+                                    <td>${row.temp_houses || 0}</td>
+                                    <td>${row.perm_class || 0}</td>
+                                    <td>${row.incomp_class || 0}</td>
+                                    <td>${row.temp_class || 0}</td>
+                                    <td>${row.desks || 0}</td>
+                                    <td>${row.desk_shortfall || 0}</td>
+                                    <td>${row.form1_boys || 0}</td>
+                                    <td>${row.form1_girls || 0}</td>
+                                    <td>${row.grade9_boys || 0}</td>
+                                    <td>${row.grade9_girls || 0}</td>
+                                    <td>${row.grade10_12_boys || 0}</td>
+                                    <td>${row.grade10_12_girls || 0}</td>
+                                    <td>${row.male_teachers || 0}</td>
+                                    <td>${row.female_teachers || 0}</td>
+                                    <td>${row.water || ''}</td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `</tbody></table>`;
+                    }
+
+                    // TEACHERS PER SUBJECT
+                    if (teacherData.length > 0) {
+                        html += `
+                            <div class="section-heading">👨‍🏫 TEACHERS PER SUBJECT DATA</div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Subject</th>
+                                        <th>Required</th>
+                                        <th>Available</th>
+                                        <th>Shortfall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        const subjects = [
+                            { key: 't_math', name: 'Additional Mathematics' },
+                            { key: 't_agri', name: 'Agricultural Science' },
+                            { key: 't_art', name: 'Art & Design' },
+                            { key: 't_bio', name: 'Biology' },
+                            { key: 't_chem', name: 'Chemistry (Pure)' },
+                            { key: 't_civic', name: 'Civic Education' },
+                            { key: 't_commerce', name: 'Commerce' },
+                            { key: 't_comp', name: 'Computer Studies' },
+                            { key: 't_design', name: 'Design & Technology' },
+                            { key: 't_eng', name: 'English Language' },
+                            { key: 't_fashion', name: 'Fashion and Fabrics' },
+                            { key: 't_food', name: 'Food & Nutrition' },
+                            { key: 't_geo', name: 'Geography' },
+                            { key: 't_hist', name: 'History' },
+                            { key: 't_home', name: 'Home Management' },
+                            { key: 't_zam_lang', name: 'Zambian Languages' },
+                            { key: 't_lit', name: 'Literature in English' },
+                            { key: 't_maths', name: 'Mathematics' },
+                            { key: 't_music', name: 'Musical Art Education' },
+                            { key: 't_phys', name: 'Physics (Pure)' },
+                            { key: 't_pe', name: 'Physical Education' },
+                            { key: 't_accounts', name: 'Principles of Accounts' },
+                            { key: 't_re', name: 'Religious Education' },
+                            { key: 't_science', name: 'Science' },
+                            { key: 't_social', name: 'Social Studies' },
+                            { key: 't_business', name: 'Business Studies' }
+                        ];
+
+                        let rowCount = 0;
+                        teacherData.forEach((row) => {
+                            subjects.forEach(subject => {
+                                const req = row[`${subject.key}_req`] || 0;
+                                const avail = row[`${subject.key}_avail`] || 0;
+                                const short = row[`${subject.key}_short`] || 0;
+                                if (req > 0 || avail > 0 || short > 0) {
+                                    rowCount++;
+                                    html += `
+                                        <tr>
+                                            <td>${rowCount}</td>
+                                            <td>${row.school_name || ''}</td>
+                                            <td>${subject.name}</td>
+                                            <td>${req}</td>
+                                            <td>${avail}</td>
+                                            <td>${short}</td>
+                                        </tr>
+                                    `;
+                                }
+                            });
+                        });
+
+                        html += `</tbody></table>`;
+                    }
+
+                    html += `
+                            <div class="footer">
+                                This report was generated automatically by the Northern Province Education Data System.<br>
+                                &copy; ${new Date().getFullYear()} Ministry of Education - ${loggedInDistrict} District
+                            </div>
+                        </div>
+                    `;
+
+                    reportContent.innerHTML = html;
+
+                    // Generate PDF
+                    const element = reportContent;
+                    const opt = {
+                        margin: [5, 5, 5, 5],
+                        filename: `${loggedInDistrict}_Consolidated_Report_${new Date().toISOString().slice(0,10)}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 2,
+                            useCORS: true,
+                            letterRendering: true
+                        },
+                        jsPDF: {
+                            unit: 'mm',
+                            format: 'a4',
+                            orientation: 'landscape'
+                        },
+                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                    };
+
+                    html2pdf().set(opt).from(element).save();
+
+                    showToast('✅ Report downloaded successfully!');
+
+                } catch (err) {
+                    showToast('❌ Report error: ' + err.message);
+                    console.error(err);
+                }
+            });
+
+            // =============================================
             // SUBMIT ENTRY - PRIMARY
             // =============================================
             document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
@@ -2234,7 +2504,6 @@
                     }
                 }
 
-                // Collect secondary school data
                 const secondaryPayload = {
                     district: district,
                     school_type: 'secondary',
@@ -2270,119 +2539,91 @@
                     teacher_sample: document.getElementById('secTeacherSample').value || ''
                 };
 
-                // Collect teacher subject data
                 const teacherPayload = {
                     district: partBDistrictSelect.value || district,
                     school_type: 'teacher_subject',
                     school_name: teacherSchoolSelect.value || secNameSelect.value || 'N/A',
-                    // Additional Mathematics
                     t_math_req: parseInt(document.getElementById('t_math_req').value) || 0,
                     t_math_avail: parseInt(document.getElementById('t_math_avail').value) || 0,
                     t_math_short: parseInt(document.getElementById('t_math_short').value) || 0,
-                    // Agricultural Science
                     t_agri_req: parseInt(document.getElementById('t_agri_req').value) || 0,
                     t_agri_avail: parseInt(document.getElementById('t_agri_avail').value) || 0,
                     t_agri_short: parseInt(document.getElementById('t_agri_short').value) || 0,
-                    // Art & Design
                     t_art_req: parseInt(document.getElementById('t_art_req').value) || 0,
                     t_art_avail: parseInt(document.getElementById('t_art_avail').value) || 0,
                     t_art_short: parseInt(document.getElementById('t_art_short').value) || 0,
-                    // Biology
                     t_bio_req: parseInt(document.getElementById('t_bio_req').value) || 0,
                     t_bio_avail: parseInt(document.getElementById('t_bio_avail').value) || 0,
                     t_bio_short: parseInt(document.getElementById('t_bio_short').value) || 0,
-                    // Chemistry
                     t_chem_req: parseInt(document.getElementById('t_chem_req').value) || 0,
                     t_chem_avail: parseInt(document.getElementById('t_chem_avail').value) || 0,
                     t_chem_short: parseInt(document.getElementById('t_chem_short').value) || 0,
-                    // Civic Education
                     t_civic_req: parseInt(document.getElementById('t_civic_req').value) || 0,
                     t_civic_avail: parseInt(document.getElementById('t_civic_avail').value) || 0,
                     t_civic_short: parseInt(document.getElementById('t_civic_short').value) || 0,
-                    // Commerce
                     t_commerce_req: parseInt(document.getElementById('t_commerce_req').value) || 0,
                     t_commerce_avail: parseInt(document.getElementById('t_commerce_avail').value) || 0,
                     t_commerce_short: parseInt(document.getElementById('t_commerce_short').value) || 0,
-                    // Computer Studies
                     t_comp_req: parseInt(document.getElementById('t_comp_req').value) || 0,
                     t_comp_avail: parseInt(document.getElementById('t_comp_avail').value) || 0,
                     t_comp_short: parseInt(document.getElementById('t_comp_short').value) || 0,
-                    // Design & Technology
                     t_design_req: parseInt(document.getElementById('t_design_req').value) || 0,
                     t_design_avail: parseInt(document.getElementById('t_design_avail').value) || 0,
                     t_design_short: parseInt(document.getElementById('t_design_short').value) || 0,
-                    // English Language
                     t_eng_req: parseInt(document.getElementById('t_eng_req').value) || 0,
                     t_eng_avail: parseInt(document.getElementById('t_eng_avail').value) || 0,
                     t_eng_short: parseInt(document.getElementById('t_eng_short').value) || 0,
-                    // Fashion and Fabrics
                     t_fashion_req: parseInt(document.getElementById('t_fashion_req').value) || 0,
                     t_fashion_avail: parseInt(document.getElementById('t_fashion_avail').value) || 0,
                     t_fashion_short: parseInt(document.getElementById('t_fashion_short').value) || 0,
-                    // Food & Nutrition
                     t_food_req: parseInt(document.getElementById('t_food_req').value) || 0,
                     t_food_avail: parseInt(document.getElementById('t_food_avail').value) || 0,
                     t_food_short: parseInt(document.getElementById('t_food_short').value) || 0,
-                    // Geography
                     t_geo_req: parseInt(document.getElementById('t_geo_req').value) || 0,
                     t_geo_avail: parseInt(document.getElementById('t_geo_avail').value) || 0,
                     t_geo_short: parseInt(document.getElementById('t_geo_short').value) || 0,
-                    // History
                     t_hist_req: parseInt(document.getElementById('t_hist_req').value) || 0,
                     t_hist_avail: parseInt(document.getElementById('t_hist_avail').value) || 0,
                     t_hist_short: parseInt(document.getElementById('t_hist_short').value) || 0,
-                    // Home Management
                     t_home_req: parseInt(document.getElementById('t_home_req').value) || 0,
                     t_home_avail: parseInt(document.getElementById('t_home_avail').value) || 0,
                     t_home_short: parseInt(document.getElementById('t_home_short').value) || 0,
-                    // Zambian Languages
                     t_zam_lang_req: parseInt(document.getElementById('t_zam_lang_req').value) || 0,
                     t_zam_lang_avail: parseInt(document.getElementById('t_zam_lang_avail').value) || 0,
                     t_zam_lang_short: parseInt(document.getElementById('t_zam_lang_short').value) || 0,
-                    // Literature in English
                     t_lit_req: parseInt(document.getElementById('t_lit_req').value) || 0,
                     t_lit_avail: parseInt(document.getElementById('t_lit_avail').value) || 0,
                     t_lit_short: parseInt(document.getElementById('t_lit_short').value) || 0,
-                    // Mathematics
                     t_maths_req: parseInt(document.getElementById('t_maths_req').value) || 0,
                     t_maths_avail: parseInt(document.getElementById('t_maths_avail').value) || 0,
                     t_maths_short: parseInt(document.getElementById('t_maths_short').value) || 0,
-                    // Musical Art Education
                     t_music_req: parseInt(document.getElementById('t_music_req').value) || 0,
                     t_music_avail: parseInt(document.getElementById('t_music_avail').value) || 0,
                     t_music_short: parseInt(document.getElementById('t_music_short').value) || 0,
-                    // Physics
                     t_phys_req: parseInt(document.getElementById('t_phys_req').value) || 0,
                     t_phys_avail: parseInt(document.getElementById('t_phys_avail').value) || 0,
                     t_phys_short: parseInt(document.getElementById('t_phys_short').value) || 0,
-                    // Physical Education
                     t_pe_req: parseInt(document.getElementById('t_pe_req').value) || 0,
                     t_pe_avail: parseInt(document.getElementById('t_pe_avail').value) || 0,
                     t_pe_short: parseInt(document.getElementById('t_pe_short').value) || 0,
-                    // Principles of Accounts
                     t_accounts_req: parseInt(document.getElementById('t_accounts_req').value) || 0,
                     t_accounts_avail: parseInt(document.getElementById('t_accounts_avail').value) || 0,
                     t_accounts_short: parseInt(document.getElementById('t_accounts_short').value) || 0,
-                    // Religious Education
                     t_re_req: parseInt(document.getElementById('t_re_req').value) || 0,
                     t_re_avail: parseInt(document.getElementById('t_re_avail').value) || 0,
                     t_re_short: parseInt(document.getElementById('t_re_short').value) || 0,
-                    // Science
                     t_science_req: parseInt(document.getElementById('t_science_req').value) || 0,
                     t_science_avail: parseInt(document.getElementById('t_science_avail').value) || 0,
                     t_science_short: parseInt(document.getElementById('t_science_short').value) || 0,
-                    // Social Studies
                     t_social_req: parseInt(document.getElementById('t_social_req').value) || 0,
                     t_social_avail: parseInt(document.getElementById('t_social_avail').value) || 0,
                     t_social_short: parseInt(document.getElementById('t_social_short').value) || 0,
-                    // Business Studies
                     t_business_req: parseInt(document.getElementById('t_business_req').value) || 0,
                     t_business_avail: parseInt(document.getElementById('t_business_avail').value) || 0,
                     t_business_short: parseInt(document.getElementById('t_business_short').value) || 0
                 };
 
                 try {
-                    // Submit both data sets
                     const [secondaryResult, teacherResult] = await Promise.all([
                         supabaseClient.from('schools_data').insert([secondaryPayload]),
                         supabaseClient.from('schools_data').insert([teacherPayload])
