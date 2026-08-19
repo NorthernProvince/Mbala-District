@@ -25,7 +25,7 @@
             padding: 10px;
         }
         .app-container {
-            max-width: 480px;
+            max-width: 520px;
             width: 100%;
             background: white;
             border-radius: 36px 36px 24px 24px;
@@ -64,10 +64,6 @@
             filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.3));
             display: block;
         }
-        .app-header h1 i {
-            color: #ffcd3c;
-            font-size: 20px;
-        }
         .header-actions {
             display: flex;
             gap: 12px;
@@ -90,9 +86,6 @@
         }
         .header-actions .admin-badge:hover {
             background: #3b557a;
-        }
-        .header-actions .admin-badge i {
-            font-size: 12px;
         }
         .app-content {
             padding: 16px 14px 20px;
@@ -137,6 +130,7 @@
             padding: 4px;
             margin-bottom: 18px;
             border: 1px solid #dce2ec;
+            flex-wrap: wrap;
         }
         .tab {
             flex: 1;
@@ -144,7 +138,7 @@
             padding: 9px 6px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             color: #3a4b66;
             cursor: pointer;
             background: transparent;
@@ -152,7 +146,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
+            min-width: 60px;
         }
         .tab.active {
             background: #1a2b4a;
@@ -172,6 +167,14 @@
             margin-bottom: 14px;
             border-left: 4px solid #1a2b4a;
             padding-left: 12px;
+        }
+        .section-title-sm {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0b1a30;
+            margin-bottom: 10px;
+            border-left: 4px solid #1a2b4a;
+            padding-left: 10px;
         }
         .form-grid {
             display: flex;
@@ -215,9 +218,10 @@
             box-shadow: 0 0 0 3px rgba(26, 43, 74, 0.08);
         }
         .field input.small-input {
-            padding: 8px 10px;
-            font-size: 13px;
+            padding: 6px 8px;
+            font-size: 12px;
             width: 100%;
+            text-align: center;
         }
         .field select option {
             padding: 8px;
@@ -237,6 +241,11 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
+        }
+        .row-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
         }
         .btn {
             background: #1a2b4a;
@@ -286,6 +295,18 @@
             font-size: 12px;
             margin: 0;
             width: auto;
+        }
+        .btn-primary {
+            background: #1a6fb0;
+            border-color: #1a6fb0;
+        }
+        .btn-teacher {
+            background: #6a1b9a;
+            border-color: #6a1b9a;
+            margin-top: 6px;
+        }
+        .btn-teacher:hover {
+            background: #4a148c;
         }
         .toast {
             background: #1e2f47;
@@ -518,11 +539,74 @@
         .logged-in-banner strong {
             color: #0b1a30;
         }
+        .subject-group {
+            background: #f8faff;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #e5ebf3;
+            margin-bottom: 6px;
+        }
+        .subject-group .subject-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a2b4a;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .subject-group .row-3 {
+            gap: 6px;
+        }
+        .subject-group input {
+            padding: 6px 4px;
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
+        .subject-group .field label {
+            font-size: 10px;
+            font-weight: 500;
+            color: #5d6f8a;
+            justify-content: center;
+        }
+        .scroll-container {
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .scroll-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #eef2f7;
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #1a2b4a;
+            border-radius: 10px;
+        }
+        .part-b-section {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 2px solid #6a1b9a;
+            border-left: 6px solid #6a1b9a;
+        }
+        .part-b-section .section-title {
+            border-left-color: #6a1b9a;
+            color: #4a148c;
+        }
+        .part-b-section .section-title i {
+            color: #6a1b9a;
+        }
         @media (max-width: 480px) {
             .row-2 {
                 grid-template-columns: 1fr;
             }
             .row-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .row-4 {
                 grid-template-columns: 1fr 1fr;
             }
             .app-container {
@@ -539,6 +623,13 @@
             .app-header h1 {
                 font-size: 14px;
                 gap: 8px;
+            }
+            .tab {
+                font-size: 10px;
+                padding: 7px 4px;
+            }
+            .part-b-section {
+                padding: 12px;
             }
         }
     </style>
@@ -645,7 +736,7 @@
                             <input type="number" id="priG27Girls" value="0" class="small-input" style="text-align:center;">
                         </div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:4px; align-items:center; margin-top:4px;">
-                            <label style="font-size:12px; font-weight:500;">Form 1-Form 2</label>
+                            <label style="font-size:12px; font-weight:500;">Grade 8 - 9</label>
                             <input type="number" id="priG89Boys" value="0" class="small-input" style="text-align:center;">
                             <input type="number" id="priG89Girls" value="0" class="small-input" style="text-align:center;">
                         </div>
@@ -711,7 +802,7 @@
                 </div>
             </div>
 
-            <!-- SECONDARY FORM -->
+            <!-- SECONDARY FORM WITH PART B -->
             <div id="secondaryTab" class="section hidden">
                 <div class="section-title"><i class="fas fa-school"></i> Secondary School Data</div>
                 <div class="form-grid" id="secondaryForm">
@@ -828,6 +919,290 @@
                     </div>
 
                     <button class="btn btn-success" data-type="secondary"><i class="fas fa-cloud-upload-alt"></i> Submit Secondary</button>
+
+                    <!-- ======================================== -->
+                    <!-- PART B: DATA ON TEACHERS PER SUBJECT - 2025 -->
+                    <!-- ======================================== -->
+                    <div class="part-b-section">
+                        <div class="section-title" style="border-left-color: #6a1b9a; color: #4a148c;">
+                            <i class="fas fa-users" style="color: #6a1b9a;"></i> B. Data on Teachers Per Subject - 2025
+                        </div>
+                        
+                        <div class="field">
+                            <label><i class="fas fa-tag"></i> School Name</label>
+                            <select id="teacherSchool" disabled>
+                                <option value="">-- Select District First --</option>
+                            </select>
+                        </div>
+
+                        <div class="sub-section-title" style="border-left-color: #6a1b9a;"><i class="fas fa-book" style="color: #6a1b9a;"></i> Subject Staffing</div>
+                        <div class="scroll-container">
+                            <!-- Additional Mathematics -->
+                            <div class="subject-group">
+                                <span class="subject-label">📐 Additional Mathematics</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_math_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_math_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_math_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Agricultural Science -->
+                            <div class="subject-group">
+                                <span class="subject-label">🌾 Agricultural Science</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_agri_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_agri_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_agri_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Art & Design -->
+                            <div class="subject-group">
+                                <span class="subject-label">🎨 Art & Design</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_art_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_art_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_art_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Biology -->
+                            <div class="subject-group">
+                                <span class="subject-label">🧬 Biology</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_bio_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_bio_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_bio_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Chemistry (Pure) -->
+                            <div class="subject-group">
+                                <span class="subject-label">🧪 Chemistry (Pure)</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_chem_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_chem_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_chem_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Civic Education -->
+                            <div class="subject-group">
+                                <span class="subject-label">⚖️ Civic Education</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_civic_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_civic_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_civic_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Commerce -->
+                            <div class="subject-group">
+                                <span class="subject-label">💼 Commerce</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_commerce_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_commerce_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_commerce_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Computer Studies -->
+                            <div class="subject-group">
+                                <span class="subject-label">💻 Computer Studies</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_comp_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_comp_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_comp_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Design & Technology -->
+                            <div class="subject-group">
+                                <span class="subject-label">🔧 Design & Technology</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_design_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_design_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_design_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- English Language -->
+                            <div class="subject-group">
+                                <span class="subject-label">📖 English Language</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_eng_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_eng_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_eng_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Fashion and Fabrics -->
+                            <div class="subject-group">
+                                <span class="subject-label">👗 Fashion and Fabrics</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_fashion_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_fashion_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_fashion_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Food & Nutrition -->
+                            <div class="subject-group">
+                                <span class="subject-label">🍎 Food & Nutrition</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_food_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_food_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_food_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Geography -->
+                            <div class="subject-group">
+                                <span class="subject-label">🌍 Geography</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_geo_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_geo_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_geo_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- History -->
+                            <div class="subject-group">
+                                <span class="subject-label">📜 History</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_hist_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_hist_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_hist_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Home Management -->
+                            <div class="subject-group">
+                                <span class="subject-label">🏠 Home Management</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_home_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_home_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_home_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Zambian Languages -->
+                            <div class="subject-group">
+                                <span class="subject-label">🗣️ Zambian Languages</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_zam_lang_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_zam_lang_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_zam_lang_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Literature in English -->
+                            <div class="subject-group">
+                                <span class="subject-label">📚 Literature in English</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_lit_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_lit_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_lit_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Mathematics -->
+                            <div class="subject-group">
+                                <span class="subject-label">➗ Mathematics</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_maths_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_maths_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_maths_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Musical Art Education -->
+                            <div class="subject-group">
+                                <span class="subject-label">🎵 Musical Art Education</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_music_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_music_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_music_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Physics (Pure) -->
+                            <div class="subject-group">
+                                <span class="subject-label">⚡ Physics (Pure)</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_phys_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_phys_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_phys_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Physical Education -->
+                            <div class="subject-group">
+                                <span class="subject-label">🏃 Physical Education</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_pe_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_pe_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_pe_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Principles of Accounts -->
+                            <div class="subject-group">
+                                <span class="subject-label">📊 Principles of Accounts</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_accounts_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_accounts_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_accounts_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Religious Education -->
+                            <div class="subject-group">
+                                <span class="subject-label">⛪ Religious Education</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_re_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_re_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_re_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Science -->
+                            <div class="subject-group">
+                                <span class="subject-label">🔬 Science</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_science_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_science_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_science_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Social Studies -->
+                            <div class="subject-group">
+                                <span class="subject-label">🌏 Social Studies</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_social_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_social_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_social_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+
+                            <!-- Business Studies -->
+                            <div class="subject-group">
+                                <span class="subject-label">💹 Business Studies</span>
+                                <div class="row-3">
+                                    <div class="field"><label>Required</label><input type="number" id="t_business_req" value="0" class="small-input"></div>
+                                    <div class="field"><label>Available</label><input type="number" id="t_business_avail" value="0" class="small-input"></div>
+                                    <div class="field"><label>Shortfall</label><input type="number" id="t_business_short" value="0" class="small-input"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-teacher" id="submitTeacherBtn"><i class="fas fa-cloud-upload-alt"></i> Submit Teachers Per Subject</button>
+                        <button class="btn btn-primary" id="exportTeacherExcelBtn" style="margin-top:8px; background:#1a6fb0; border-color:#1a6fb0;"><i class="fas fa-file-excel"></i> Export Teachers Data to Excel</button>
+                    </div>
+                    <!-- END PART B -->
+
                 </div>
             </div>
 
@@ -914,6 +1289,7 @@
             const districtSelect = document.getElementById('districtSelect');
             const priNameSelect = document.getElementById('priName');
             const secNameSelect = document.getElementById('secName');
+            const teacherSchoolSelect = document.getElementById('teacherSchool');
             const adminHeaderBtn = document.getElementById('adminHeaderBtn');
             const adminPanel = document.getElementById('adminPanel');
             const closeAdminBtn = document.getElementById('closeAdminBtn');
@@ -966,12 +1342,16 @@
             // =============================================
             async function loadSchoolOptions(type) {
                 const district = districtSelect.value;
-                const selectEl = type === 'primary' ? priNameSelect : secNameSelect;
-                const distField = document.getElementById(type === 'primary' ? 'priDist' : 'secDist');
-                const emisField = document.getElementById(type === 'primary' ? 'priEmis' : 'secEmis');
+                let selectEl;
+                if (type === 'primary') {
+                    selectEl = priNameSelect;
+                } else if (type === 'secondary') {
+                    selectEl = secNameSelect;
+                } else if (type === 'teacher') {
+                    selectEl = teacherSchoolSelect;
+                }
 
-                distField.value = '';
-                emisField.value = '';
+                if (!selectEl) return;
 
                 if (!district) {
                     selectEl.innerHTML = '<option value="">-- Select District First --</option>';
@@ -994,12 +1374,13 @@
                         .from('schools')
                         .select('name, distance, emis')
                         .eq('district', district)
-                        .eq('school_type', type)
+                        .eq('school_type', type === 'teacher' ? 'secondary' : type)
                         .order('name');
 
                     if (error) throw error;
 
-                    selectEl.innerHTML = `<option value="">-- Select ${type === 'primary' ? 'Primary' : 'Secondary'} School --</option>`;
+                    const label = type === 'primary' ? 'Primary' : 'Secondary';
+                    selectEl.innerHTML = `<option value="">-- Select ${label} School --</option>`;
 
                     if (!data || data.length === 0) {
                         selectEl.innerHTML += `<option value="" disabled>No schools loaded yet for ${district}</option>`;
@@ -1024,6 +1405,7 @@
             districtSelect.addEventListener('change', function() {
                 loadSchoolOptions('primary');
                 loadSchoolOptions('secondary');
+                loadSchoolOptions('teacher');
             });
 
             // =============================================
@@ -1622,6 +2004,305 @@
                     showToast('✅ Secondary data saved!');
                 } catch (err) {
                     showToast('❌ Error: ' + err.message);
+                    console.error(err);
+                }
+            });
+
+            // =============================================
+            // SUBMIT TEACHERS PER SUBJECT (PART B)
+            // =============================================
+            document.getElementById('submitTeacherBtn').addEventListener('click', async function() {
+                const district = districtSelect.value;
+                if (!district) {
+                    showToast('⚠️ Please select your district first');
+                    return;
+                }
+                if (!teacherSchoolSelect.value) {
+                    showToast('⚠️ Please select your school');
+                    return;
+                }
+                if (!supabaseClient) {
+                    if (!initSupabase()) {
+                        showToast('⚠️ Connection error');
+                        return;
+                    }
+                }
+
+                const payload = {
+                    district: district,
+                    school_type: 'teacher_subject',
+                    school_name: teacherSchoolSelect.value || 'N/A',
+                    // Additional Mathematics
+                    t_math_req: parseInt(document.getElementById('t_math_req').value) || 0,
+                    t_math_avail: parseInt(document.getElementById('t_math_avail').value) || 0,
+                    t_math_short: parseInt(document.getElementById('t_math_short').value) || 0,
+                    // Agricultural Science
+                    t_agri_req: parseInt(document.getElementById('t_agri_req').value) || 0,
+                    t_agri_avail: parseInt(document.getElementById('t_agri_avail').value) || 0,
+                    t_agri_short: parseInt(document.getElementById('t_agri_short').value) || 0,
+                    // Art & Design
+                    t_art_req: parseInt(document.getElementById('t_art_req').value) || 0,
+                    t_art_avail: parseInt(document.getElementById('t_art_avail').value) || 0,
+                    t_art_short: parseInt(document.getElementById('t_art_short').value) || 0,
+                    // Biology
+                    t_bio_req: parseInt(document.getElementById('t_bio_req').value) || 0,
+                    t_bio_avail: parseInt(document.getElementById('t_bio_avail').value) || 0,
+                    t_bio_short: parseInt(document.getElementById('t_bio_short').value) || 0,
+                    // Chemistry
+                    t_chem_req: parseInt(document.getElementById('t_chem_req').value) || 0,
+                    t_chem_avail: parseInt(document.getElementById('t_chem_avail').value) || 0,
+                    t_chem_short: parseInt(document.getElementById('t_chem_short').value) || 0,
+                    // Civic Education
+                    t_civic_req: parseInt(document.getElementById('t_civic_req').value) || 0,
+                    t_civic_avail: parseInt(document.getElementById('t_civic_avail').value) || 0,
+                    t_civic_short: parseInt(document.getElementById('t_civic_short').value) || 0,
+                    // Commerce
+                    t_commerce_req: parseInt(document.getElementById('t_commerce_req').value) || 0,
+                    t_commerce_avail: parseInt(document.getElementById('t_commerce_avail').value) || 0,
+                    t_commerce_short: parseInt(document.getElementById('t_commerce_short').value) || 0,
+                    // Computer Studies
+                    t_comp_req: parseInt(document.getElementById('t_comp_req').value) || 0,
+                    t_comp_avail: parseInt(document.getElementById('t_comp_avail').value) || 0,
+                    t_comp_short: parseInt(document.getElementById('t_comp_short').value) || 0,
+                    // Design & Technology
+                    t_design_req: parseInt(document.getElementById('t_design_req').value) || 0,
+                    t_design_avail: parseInt(document.getElementById('t_design_avail').value) || 0,
+                    t_design_short: parseInt(document.getElementById('t_design_short').value) || 0,
+                    // English Language
+                    t_eng_req: parseInt(document.getElementById('t_eng_req').value) || 0,
+                    t_eng_avail: parseInt(document.getElementById('t_eng_avail').value) || 0,
+                    t_eng_short: parseInt(document.getElementById('t_eng_short').value) || 0,
+                    // Fashion and Fabrics
+                    t_fashion_req: parseInt(document.getElementById('t_fashion_req').value) || 0,
+                    t_fashion_avail: parseInt(document.getElementById('t_fashion_avail').value) || 0,
+                    t_fashion_short: parseInt(document.getElementById('t_fashion_short').value) || 0,
+                    // Food & Nutrition
+                    t_food_req: parseInt(document.getElementById('t_food_req').value) || 0,
+                    t_food_avail: parseInt(document.getElementById('t_food_avail').value) || 0,
+                    t_food_short: parseInt(document.getElementById('t_food_short').value) || 0,
+                    // Geography
+                    t_geo_req: parseInt(document.getElementById('t_geo_req').value) || 0,
+                    t_geo_avail: parseInt(document.getElementById('t_geo_avail').value) || 0,
+                    t_geo_short: parseInt(document.getElementById('t_geo_short').value) || 0,
+                    // History
+                    t_hist_req: parseInt(document.getElementById('t_hist_req').value) || 0,
+                    t_hist_avail: parseInt(document.getElementById('t_hist_avail').value) || 0,
+                    t_hist_short: parseInt(document.getElementById('t_hist_short').value) || 0,
+                    // Home Management
+                    t_home_req: parseInt(document.getElementById('t_home_req').value) || 0,
+                    t_home_avail: parseInt(document.getElementById('t_home_avail').value) || 0,
+                    t_home_short: parseInt(document.getElementById('t_home_short').value) || 0,
+                    // Zambian Languages
+                    t_zam_lang_req: parseInt(document.getElementById('t_zam_lang_req').value) || 0,
+                    t_zam_lang_avail: parseInt(document.getElementById('t_zam_lang_avail').value) || 0,
+                    t_zam_lang_short: parseInt(document.getElementById('t_zam_lang_short').value) || 0,
+                    // Literature in English
+                    t_lit_req: parseInt(document.getElementById('t_lit_req').value) || 0,
+                    t_lit_avail: parseInt(document.getElementById('t_lit_avail').value) || 0,
+                    t_lit_short: parseInt(document.getElementById('t_lit_short').value) || 0,
+                    // Mathematics
+                    t_maths_req: parseInt(document.getElementById('t_maths_req').value) || 0,
+                    t_maths_avail: parseInt(document.getElementById('t_maths_avail').value) || 0,
+                    t_maths_short: parseInt(document.getElementById('t_maths_short').value) || 0,
+                    // Musical Art Education
+                    t_music_req: parseInt(document.getElementById('t_music_req').value) || 0,
+                    t_music_avail: parseInt(document.getElementById('t_music_avail').value) || 0,
+                    t_music_short: parseInt(document.getElementById('t_music_short').value) || 0,
+                    // Physics
+                    t_phys_req: parseInt(document.getElementById('t_phys_req').value) || 0,
+                    t_phys_avail: parseInt(document.getElementById('t_phys_avail').value) || 0,
+                    t_phys_short: parseInt(document.getElementById('t_phys_short').value) || 0,
+                    // Physical Education
+                    t_pe_req: parseInt(document.getElementById('t_pe_req').value) || 0,
+                    t_pe_avail: parseInt(document.getElementById('t_pe_avail').value) || 0,
+                    t_pe_short: parseInt(document.getElementById('t_pe_short').value) || 0,
+                    // Principles of Accounts
+                    t_accounts_req: parseInt(document.getElementById('t_accounts_req').value) || 0,
+                    t_accounts_avail: parseInt(document.getElementById('t_accounts_avail').value) || 0,
+                    t_accounts_short: parseInt(document.getElementById('t_accounts_short').value) || 0,
+                    // Religious Education
+                    t_re_req: parseInt(document.getElementById('t_re_req').value) || 0,
+                    t_re_avail: parseInt(document.getElementById('t_re_avail').value) || 0,
+                    t_re_short: parseInt(document.getElementById('t_re_short').value) || 0,
+                    // Science
+                    t_science_req: parseInt(document.getElementById('t_science_req').value) || 0,
+                    t_science_avail: parseInt(document.getElementById('t_science_avail').value) || 0,
+                    t_science_short: parseInt(document.getElementById('t_science_short').value) || 0,
+                    // Social Studies
+                    t_social_req: parseInt(document.getElementById('t_social_req').value) || 0,
+                    t_social_avail: parseInt(document.getElementById('t_social_avail').value) || 0,
+                    t_social_short: parseInt(document.getElementById('t_social_short').value) || 0,
+                    // Business Studies
+                    t_business_req: parseInt(document.getElementById('t_business_req').value) || 0,
+                    t_business_avail: parseInt(document.getElementById('t_business_avail').value) || 0,
+                    t_business_short: parseInt(document.getElementById('t_business_short').value) || 0
+                };
+
+                try {
+                    const { data, error } = await supabaseClient.from('schools_data').insert([payload]);
+                    if (error) throw error;
+                    showToast('✅ Teachers Per Subject data saved!');
+                } catch (err) {
+                    showToast('❌ Error: ' + err.message);
+                    console.error(err);
+                }
+            });
+
+            // =============================================
+            // EXPORT TEACHERS PER SUBJECT EXCEL
+            // =============================================
+            document.getElementById('exportTeacherExcelBtn').addEventListener('click', async function() {
+                if (!isLoggedIn || !loggedInDistrict) {
+                    showToast('🔒 Please login first');
+                    return;
+                }
+                if (!supabaseClient) {
+                    if (!initSupabase()) {
+                        showToast('⚠️ Connection error');
+                        return;
+                    }
+                }
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('schools_data')
+                        .select('*')
+                        .eq('district', loggedInDistrict)
+                        .eq('school_type', 'teacher_subject')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    if (!data || data.length === 0) { showToast('No teacher subject data to export'); return; }
+
+                    const wb = XLSX.utils.book_new();
+
+                    const headers = [
+                        'S/NO', 'DISTRICT', 'SCHOOL NAME',
+                        // Additional Mathematics
+                        'Add Math Required', 'Add Math Available', 'Add Math Shortfall',
+                        // Agricultural Science
+                        'Agri Science Required', 'Agri Science Available', 'Agri Science Shortfall',
+                        // Art & Design
+                        'Art & Design Required', 'Art & Design Available', 'Art & Design Shortfall',
+                        // Biology
+                        'Biology Required', 'Biology Available', 'Biology Shortfall',
+                        // Chemistry
+                        'Chemistry Required', 'Chemistry Available', 'Chemistry Shortfall',
+                        // Civic Education
+                        'Civic Education Required', 'Civic Education Available', 'Civic Education Shortfall',
+                        // Commerce
+                        'Commerce Required', 'Commerce Available', 'Commerce Shortfall',
+                        // Computer Studies
+                        'Computer Studies Required', 'Computer Studies Available', 'Computer Studies Shortfall',
+                        // Design & Technology
+                        'Design & Tech Required', 'Design & Tech Available', 'Design & Tech Shortfall',
+                        // English Language
+                        'English Required', 'English Available', 'English Shortfall',
+                        // Fashion and Fabrics
+                        'Fashion Required', 'Fashion Available', 'Fashion Shortfall',
+                        // Food & Nutrition
+                        'Food & Nutrition Required', 'Food & Nutrition Available', 'Food & Nutrition Shortfall',
+                        // Geography
+                        'Geography Required', 'Geography Available', 'Geography Shortfall',
+                        // History
+                        'History Required', 'History Available', 'History Shortfall',
+                        // Home Management
+                        'Home Management Required', 'Home Management Available', 'Home Management Shortfall',
+                        // Zambian Languages
+                        'Zambian Languages Required', 'Zambian Languages Available', 'Zambian Languages Shortfall',
+                        // Literature in English
+                        'Literature Required', 'Literature Available', 'Literature Shortfall',
+                        // Mathematics
+                        'Mathematics Required', 'Mathematics Available', 'Mathematics Shortfall',
+                        // Musical Art Education
+                        'Music Required', 'Music Available', 'Music Shortfall',
+                        // Physics
+                        'Physics Required', 'Physics Available', 'Physics Shortfall',
+                        // Physical Education
+                        'PE Required', 'PE Available', 'PE Shortfall',
+                        // Principles of Accounts
+                        'Accounts Required', 'Accounts Available', 'Accounts Shortfall',
+                        // Religious Education
+                        'RE Required', 'RE Available', 'RE Shortfall',
+                        // Science
+                        'Science Required', 'Science Available', 'Science Shortfall',
+                        // Social Studies
+                        'Social Studies Required', 'Social Studies Available', 'Social Studies Shortfall',
+                        // Business Studies
+                        'Business Studies Required', 'Business Studies Available', 'Business Studies Shortfall'
+                    ];
+
+                    const fieldMap = [
+                        'district', 'school_name',
+                        't_math_req', 't_math_avail', 't_math_short',
+                        't_agri_req', 't_agri_avail', 't_agri_short',
+                        't_art_req', 't_art_avail', 't_art_short',
+                        't_bio_req', 't_bio_avail', 't_bio_short',
+                        't_chem_req', 't_chem_avail', 't_chem_short',
+                        't_civic_req', 't_civic_avail', 't_civic_short',
+                        't_commerce_req', 't_commerce_avail', 't_commerce_short',
+                        't_comp_req', 't_comp_avail', 't_comp_short',
+                        't_design_req', 't_design_avail', 't_design_short',
+                        't_eng_req', 't_eng_avail', 't_eng_short',
+                        't_fashion_req', 't_fashion_avail', 't_fashion_short',
+                        't_food_req', 't_food_avail', 't_food_short',
+                        't_geo_req', 't_geo_avail', 't_geo_short',
+                        't_hist_req', 't_hist_avail', 't_hist_short',
+                        't_home_req', 't_home_avail', 't_home_short',
+                        't_zam_lang_req', 't_zam_lang_avail', 't_zam_lang_short',
+                        't_lit_req', 't_lit_avail', 't_lit_short',
+                        't_maths_req', 't_maths_avail', 't_maths_short',
+                        't_music_req', 't_music_avail', 't_music_short',
+                        't_phys_req', 't_phys_avail', 't_phys_short',
+                        't_pe_req', 't_pe_avail', 't_pe_short',
+                        't_accounts_req', 't_accounts_avail', 't_accounts_short',
+                        't_re_req', 't_re_avail', 't_re_short',
+                        't_science_req', 't_science_avail', 't_science_short',
+                        't_social_req', 't_social_avail', 't_social_short',
+                        't_business_req', 't_business_avail', 't_business_short'
+                    ];
+
+                    const rows = data.map((row, index) => {
+                        const rowData = [index + 1];
+                        fieldMap.forEach(field => {
+                            rowData.push(row[field] !== undefined ? row[field] : (typeof row[field] === 'number' ? 0 :
+                                ''));
+                        });
+                        return rowData;
+                    });
+
+                    const wsData = [
+                        [`${loggedInDistrict.toUpperCase()} DISTRICT EDUCATION BOARD`],
+                        ['DATA ON TEACHERS PER SUBJECT - 2025'],
+                        [''],
+                        headers,
+                        ...rows
+                    ];
+
+                    const ws = XLSX.utils.aoa_to_sheet(wsData);
+                    ws['!cols'] = headers.map((h, i) => {
+                        let width = 12;
+                        if (i < 3) width = 20;
+                        if (i > 3 && i % 3 === 1) width = 14;
+                        return { wch: width };
+                    });
+                    ws['!merges'] = [
+                        { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } },
+                        { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } }
+                    ];
+
+                    XLSX.utils.book_append_sheet(wb, ws, 'Teachers Per Subject');
+
+                    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${loggedInDistrict}_Teachers_Per_Subject_${new Date().toISOString().slice(0,10)}.xlsx`;
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                    showToast('✅ Teachers Per Subject Excel exported!');
+
+                } catch (err) {
+                    showToast('❌ Export error: ' + err.message);
                     console.error(err);
                 }
             });
