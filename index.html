@@ -242,11 +242,6 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
         }
-        .row-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 8px;
-        }
         .btn {
             background: #1a2b4a;
             border: none;
@@ -296,17 +291,12 @@
             margin: 0;
             width: auto;
         }
-        .btn-primary {
-            background: #1a6fb0;
-            border-color: #1a6fb0;
+        .btn-report {
+            background: #c0392b;
+            border-color: #c0392b;
         }
-        .btn-teacher {
-            background: #6a1b9a;
-            border-color: #6a1b9a;
-            margin-top: 6px;
-        }
-        .btn-teacher:hover {
-            background: #4a148c;
+        .btn-report:hover {
+            background: #a93226;
         }
         .toast {
             background: #1e2f47;
@@ -635,33 +625,6 @@
             color: #7a5a8a;
             margin-top: 6px;
         }
-        /* Admin login status */
-        .login-status {
-            display: none;
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            font-weight: 500;
-            align-items: center;
-            gap: 8px;
-        }
-        .login-status.show {
-            display: flex;
-        }
-        .login-status.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #a5d6a7;
-        }
-        .login-status.error {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
-        }
-        .login-status i {
-            font-size: 18px;
-        }
         .filter-bar {
             display: flex;
             gap: 8px;
@@ -697,9 +660,6 @@
             .row-3 {
                 grid-template-columns: 1fr 1fr;
             }
-            .row-4 {
-                grid-template-columns: 1fr 1fr;
-            }
             .app-container {
                 border-radius: 24px;
             }
@@ -725,6 +685,304 @@
             .filter-bar select {
                 font-size: 11px;
                 padding: 6px 10px;
+            }
+        }
+
+        /* ============================================= */
+        /* REPORT STYLES - Print and Display */
+        /* ============================================= */
+        .report-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .report-overlay.active {
+            display: flex;
+        }
+        .report-container {
+            background: white;
+            max-width: 1100px;
+            width: 100%;
+            max-height: 95vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .report-close-btn {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #c0392b;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .report-close-btn:hover {
+            background: #a93226;
+        }
+        .report-content {
+            padding-top: 10px;
+        }
+        /* Report Header */
+        .report-header {
+            text-align: center;
+            border-bottom: 3px double #1a2b4a;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        .report-header .coat-arms {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 10px;
+        }
+        .report-header .coat-arms img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .report-header h1 {
+            font-size: 22px;
+            color: #1a2b4a;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        .report-header h2 {
+            font-size: 16px;
+            color: #2c405e;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .report-header .report-date {
+            font-size: 13px;
+            color: #7a8fa8;
+            margin-top: 6px;
+        }
+        /* Report Meta */
+        .report-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            background: #f8faff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e5ebf3;
+        }
+        .report-meta-item {
+            text-align: center;
+        }
+        .report-meta-item .label {
+            font-size: 11px;
+            color: #7a8fa8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .report-meta-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a2b4a;
+            margin-top: 2px;
+        }
+        /* Report Tables */
+        .report-table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border: 1px solid #e5ebf3;
+            border-radius: 12px;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 700px;
+        }
+        .report-table thead {
+            background: #1a2b4a;
+            color: white;
+        }
+        .report-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .report-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: top;
+        }
+        .report-table tbody tr:nth-child(even) {
+            background: #f8faff;
+        }
+        .report-table tbody tr:hover {
+            background: #eef2f7;
+        }
+        .report-table .totals-row {
+            background: #eef2f7 !important;
+            font-weight: 700;
+        }
+        .report-table .totals-row td {
+            border-top: 2px solid #1a2b4a;
+        }
+        .report-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2b4a;
+            margin: 25px 0 12px 0;
+            padding-left: 12px;
+            border-left: 4px solid #c0392b;
+        }
+        .report-section-title i {
+            margin-right: 8px;
+            color: #c0392b;
+        }
+        .report-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5ebf3;
+            font-size: 12px;
+            color: #7a8fa8;
+        }
+        .report-footer .signature {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .report-footer .signature-item {
+            text-align: center;
+            min-width: 150px;
+        }
+        .report-footer .signature-item .line {
+            border-bottom: 1px solid #1a2b4a;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+            min-width: 120px;
+        }
+        .report-footer .signature-item .title {
+            font-size: 11px;
+            color: #7a8fa8;
+        }
+        /* Badge colors in report */
+        .badge-primary {
+            background: #1a2b4a20;
+            color: #1a2b4a;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge-secondary {
+            background: #1a6fb020;
+            color: #1a6fb0;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge-teacher {
+            background: #6a1b9a20;
+            color: #6a1b9a;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        /* Report Print Styles */
+        @media print {
+            .report-overlay {
+                position: static;
+                background: white;
+                padding: 0;
+            }
+            .report-container {
+                max-height: none;
+                border-radius: 0;
+                padding: 20px;
+                box-shadow: none;
+            }
+            .report-close-btn {
+                display: none !important;
+            }
+            .report-table {
+                font-size: 10px;
+                min-width: auto;
+            }
+            .report-table th {
+                font-size: 9px;
+                padding: 6px 8px;
+            }
+            .report-table td {
+                padding: 5px 8px;
+            }
+            .report-header h1 {
+                font-size: 18px;
+            }
+            .report-header h2 {
+                font-size: 14px;
+            }
+            body {
+                background: white;
+                padding: 0;
+            }
+            .app-container {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .app-header, .app-content, .district-bar, .tabs, .footer-note {
+                display: none !important;
+            }
+            .report-overlay {
+                display: block !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .report-container {
+                padding: 15px;
+            }
+            .report-meta {
+                grid-template-columns: 1fr 1fr;
+            }
+            .report-header h1 {
+                font-size: 18px;
+            }
+            .report-table {
+                font-size: 10px;
+                min-width: 500px;
+            }
+        }
+        @media (max-width: 480px) {
+            .report-meta {
+                grid-template-columns: 1fr;
+            }
+            .report-container {
+                padding: 10px;
             }
         }
     </style>
@@ -1338,6 +1596,7 @@
                 <div class="admin-actions">
                     <button id="refreshAdminBtn" class="btn btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
                     <button id="exportExcelBtn" class="btn" style="background:#1a2b4a;"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button id="reportBtn" class="btn btn-report"><i class="fas fa-file-pdf"></i> Report</button>
                 </div>
                 <!-- Filter Bar -->
                 <div class="filter-bar">
@@ -1352,6 +1611,16 @@
                 <div id="adminList" class="admin-list">
                     <p style="color:#7a8fa8; text-align:center; padding:20px 0;">Loading data...</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPORT OVERLAY -->
+    <div class="report-overlay" id="reportOverlay">
+        <div class="report-container" id="reportContainer">
+            <button class="report-close-btn" id="reportCloseBtn"><i class="fas fa-times"></i></button>
+            <div class="report-content" id="reportContent">
+                <!-- Report content will be dynamically generated -->
             </div>
         </div>
     </div>
@@ -1399,6 +1668,7 @@
             let supabaseClient = null;
             let isLoggedIn = false;
             let loggedInDistrict = null;
+            let cachedData = null;
 
             // DOM refs
             const primaryTab = document.getElementById('primaryTab');
@@ -1420,6 +1690,7 @@
             const adminList = document.getElementById('adminList');
             const refreshBtn = document.getElementById('refreshAdminBtn');
             const exportExcelBtn = document.getElementById('exportExcelBtn');
+            const reportBtn = document.getElementById('reportBtn');
             const loginError = document.getElementById('loginError');
             const loginLoading = document.getElementById('loginLoading');
             const adminLogoutBtn = document.getElementById('adminLogoutBtn');
@@ -1428,6 +1699,9 @@
             const toastMsg = document.getElementById('toastMsg');
             const filterDataType = document.getElementById('filterDataType');
             const dataCount = document.getElementById('dataCount');
+            const reportOverlay = document.getElementById('reportOverlay');
+            const reportCloseBtn = document.getElementById('reportCloseBtn');
+            const reportContent = document.getElementById('reportContent');
 
             function initSupabase() {
                 try {
@@ -1459,7 +1733,7 @@
             });
 
             // =============================================
-            // SCHOOL LISTS - loaded from Supabase per district
+            // SCHOOL LISTS
             // =============================================
             async function loadSchoolOptions(type) {
                 const district = districtSelect.value;
@@ -1523,9 +1797,6 @@
                 }
             }
 
-            // =============================================
-            // PART B SCHOOL LISTS - using Part B district selector
-            // =============================================
             async function loadPartBSchoolOptions() {
                 const district = partBDistrictSelect.value;
                 const selectEl = teacherSchoolSelect;
@@ -1559,7 +1830,6 @@
                     selectEl.innerHTML = `<option value="">-- Select Secondary School --</option>`;
 
                     if (!data || data.length === 0) {
-                        // Fallback for Mbala
                         if (district === 'Mbala') {
                             const mbalaSchools = [
                                 'Chilubula Secondary School',
@@ -1606,19 +1876,17 @@
                 }
             }
 
-            // Main district selector change
             districtSelect.addEventListener('change', function() {
                 loadSchoolOptions('primary');
                 loadSchoolOptions('secondary');
             });
 
-            // Part B district selector change
             partBDistrictSelect.addEventListener('change', function() {
                 loadPartBSchoolOptions();
             });
 
             // =============================================
-            // AUTO-FILL DISTANCE AND EMIS
+            // AUTO-FILL
             // =============================================
             priNameSelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
@@ -1807,7 +2075,7 @@
             window.deleteRecord = deleteRecord;
 
             // =============================================
-            // LOAD ADMIN DATA with filtering
+            // LOAD ADMIN DATA
             // =============================================
             async function loadAdminData() {
                 if (!isLoggedIn || !loggedInDistrict) {
@@ -1826,7 +2094,6 @@
                     adminList.innerHTML = '<p style="color:#7a8fa8; text-align:center; padding:20px 0;">Loading...</p>';
                     dataCount.textContent = 'Loading records...';
                     
-                    // Get filter value
                     const filterType = filterDataType.value;
                     
                     let query = supabaseClient
@@ -1835,7 +2102,6 @@
                         .eq('district', loggedInDistrict)
                         .order('created_at', { ascending: false });
                     
-                    // Apply filter if not 'all'
                     if (filterType !== 'all') {
                         query = query.eq('school_type', filterType);
                     }
@@ -1844,13 +2110,14 @@
 
                     if (error) throw error;
 
+                    cachedData = data || [];
+
                     if (!data || data.length === 0) {
                         adminList.innerHTML = `<p style="color:#7a8fa8; text-align:center; padding:20px 0;">📭 No submissions yet for ${loggedInDistrict}</p>`;
                         dataCount.textContent = '0 records found';
                         return;
                     }
 
-                    // Update count
                     const count = data.length;
                     dataCount.textContent = `${count} record${count > 1 ? 's' : ''} found`;
 
@@ -1867,7 +2134,6 @@
                             typeColor = '#6a1b9a';
                         }
                         
-                        // Get display fields based on type
                         let displayDetails = '';
                         if (type === 'primary' || type === 'secondary') {
                             displayDetails = `
@@ -1879,7 +2145,6 @@
                                 <span><i class="fas fa-tint"></i> ${row.water || '-'}</span>
                             `;
                         } else if (type === 'teacher_subject') {
-                            // Show subject stats summary
                             const subjectCount = Object.keys(row).filter(k => k.startsWith('t_') && k.endsWith('_req')).length;
                             displayDetails = `
                                 <span><i class="fas fa-book"></i> Subjects: ${subjectCount}</span>
@@ -1912,7 +2177,6 @@
                 }
             }
 
-            // Filter change event
             filterDataType.addEventListener('change', function() {
                 if (isLoggedIn) {
                     loadAdminData();
@@ -1924,6 +2188,277 @@
                     loadAdminData();
                 } else {
                     showToast('🔒 Please login first');
+                }
+            });
+
+            // =============================================
+            // GENERATE PROFESSIONAL REPORT
+            // =============================================
+            function generateReport() {
+                if (!cachedData || cachedData.length === 0) {
+                    showToast('⚠️ No data available to generate report');
+                    return;
+                }
+
+                const district = loggedInDistrict;
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-ZM', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                const timeStr = now.toLocaleTimeString('en-ZM', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                const primaryData = cachedData.filter(row => row.school_type === 'primary');
+                const secondaryData = cachedData.filter(row => row.school_type === 'secondary');
+                const teacherData = cachedData.filter(row => row.school_type === 'teacher_subject');
+
+                let html = `
+                    <div class="report-header">
+                        <div class="coat-arms">
+                            <img src="image/coat_arms.png" alt="Zambian Coat of Arms">
+                        </div>
+                        <h1>REPUBLIC OF ZAMBIA</h1>
+                        <h2>NORTHERN PROVINCE - ${district.toUpperCase()} DISTRICT</h2>
+                        <h2 style="color:#c0392b; font-weight:700; margin-top:6px;">EDUCATION STATISTICAL REPORT</h2>
+                        <div class="report-date">Generated on: ${dateStr} at ${timeStr}</div>
+                    </div>
+
+                    <div class="report-meta">
+                        <div class="report-meta-item">
+                            <div class="label">Total Schools</div>
+                            <div class="value">${primaryData.length + secondaryData.length}</div>
+                        </div>
+                        <div class="report-meta-item">
+                            <div class="label">Primary Schools</div>
+                            <div class="value">${primaryData.length}</div>
+                        </div>
+                        <div class="report-meta-item">
+                            <div class="label">Secondary Schools</div>
+                            <div class="value">${secondaryData.length}</div>
+                        </div>
+                        <div class="report-meta-item">
+                            <div class="label">Teacher Subject Records</div>
+                            <div class="value">${teacherData.length}</div>
+                        </div>
+                        <div class="report-meta-item">
+                            <div class="label">Total Teachers (Primary)</div>
+                            <div class="value">${primaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</div>
+                        </div>
+                        <div class="report-meta-item">
+                            <div class="label">Total Teachers (Secondary)</div>
+                            <div class="value">${secondaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</div>
+                        </div>
+                    </div>
+                `;
+
+                // PRIMARY SCHOOLS TABLE
+                if (primaryData.length > 0) {
+                    html += `
+                        <div class="report-section-title"><i class="fas fa-chalkboard-teacher"></i> PRIMARY SCHOOLS DATA</div>
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Status</th>
+                                        <th>Distance</th>
+                                        <th>EMIS</th>
+                                        <th>Teachers (M/F)</th>
+                                        <th>Total Teachers</th>
+                                        <th>Desks</th>
+                                        <th>Water</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    primaryData.forEach((row, index) => {
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${row.school_name || 'N/A'}</strong></td>
+                                <td>${row.status || '-'}</td>
+                                <td>${row.distance || 0} km</td>
+                                <td>${row.emis || '-'}</td>
+                                <td>${row.male_teachers || 0}/${row.female_teachers || 0}</td>
+                                <td>${row.total_teachers || 0}</td>
+                                <td>${row.desks || 0}</td>
+                                <td>${row.water || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                    // Totals row
+                    html += `
+                                <tr class="totals-row">
+                                    <td colspan="5" style="text-align:right; font-weight:700;">TOTALS</td>
+                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${primaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
+                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
+                                    <td>${primaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
+                                    <td></td>
+                                </tr>
+                    `;
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+
+                // SECONDARY SCHOOLS TABLE
+                if (secondaryData.length > 0) {
+                    html += `
+                        <div class="report-section-title"><i class="fas fa-school"></i> SECONDARY SCHOOLS DATA</div>
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Status</th>
+                                        <th>Distance</th>
+                                        <th>EMIS</th>
+                                        <th>Teachers (M/F)</th>
+                                        <th>Total Teachers</th>
+                                        <th>Desks</th>
+                                        <th>Water</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    secondaryData.forEach((row, index) => {
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${row.school_name || 'N/A'}</strong></td>
+                                <td>${row.status || '-'}</td>
+                                <td>${row.distance || 0} km</td>
+                                <td>${row.emis || '-'}</td>
+                                <td>${row.male_teachers || 0}/${row.female_teachers || 0}</td>
+                                <td>${row.total_teachers || 0}</td>
+                                <td>${row.desks || 0}</td>
+                                <td>${row.water || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                    html += `
+                                <tr class="totals-row">
+                                    <td colspan="5" style="text-align:right; font-weight:700;">TOTALS</td>
+                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.male_teachers) || 0), 0)}/${secondaryData.reduce((sum, r) => sum + (parseInt(r.female_teachers) || 0), 0)}</td>
+                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.total_teachers) || 0), 0)}</td>
+                                    <td>${secondaryData.reduce((sum, r) => sum + (parseInt(r.desks) || 0), 0)}</td>
+                                    <td></td>
+                                </tr>
+                    `;
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+
+                // TEACHERS PER SUBJECT
+                if (teacherData.length > 0) {
+                    html += `
+                        <div class="report-section-title"><i class="fas fa-users"></i> TEACHERS PER SUBJECT DATA</div>
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>School Name</th>
+                                        <th>Subjects</th>
+                                        <th>Total Required</th>
+                                        <th>Total Available</th>
+                                        <th>Total Shortfall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    teacherData.forEach((row, index) => {
+                        const reqSum = Object.keys(row).filter(k => k.endsWith('_req')).reduce((sum, k) => sum + (parseInt(row[k]) || 0), 0);
+                        const availSum = Object.keys(row).filter(k => k.endsWith('_avail')).reduce((sum, k) => sum + (parseInt(row[k]) || 0), 0);
+                        const shortSum = Object.keys(row).filter(k => k.endsWith('_short')).reduce((sum, k) => sum + (parseInt(row[k]) || 0), 0);
+                        const subjectCount = Object.keys(row).filter(k => k.startsWith('t_') && k.endsWith('_req')).length;
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${row.school_name || 'N/A'}</strong></td>
+                                <td>${subjectCount}</td>
+                                <td>${reqSum}</td>
+                                <td>${availSum}</td>
+                                <td>${shortSum}</td>
+                            </tr>
+                        `;
+                    });
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+
+                // Footer with signatures
+                html += `
+                    <div class="report-footer">
+                        <p><i class="fas fa-print"></i> This report is computer generated and does not require a signature.</p>
+                        <p>For any queries, contact the District Education Board Secretary - ${district} District.</p>
+                        <div class="signature">
+                            <div class="signature-item">
+                                <div class="line">&nbsp;</div>
+                                <div class="title">District Education Board Secretary</div>
+                            </div>
+                            <div class="signature-item">
+                                <div class="line">&nbsp;</div>
+                                <div class="title">Senior Education Officer</div>
+                            </div>
+                            <div class="signature-item">
+                                <div class="line">&nbsp;</div>
+                                <div class="title">Date: ${dateStr}</div>
+                            </div>
+                        </div>
+                        <p style="margin-top:15px; font-size:11px;">Northern Province Education Data System &copy; 2026</p>
+                    </div>
+                `;
+
+                reportContent.innerHTML = html;
+                reportOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Report button click
+            reportBtn.addEventListener('click', function() {
+                if (!isLoggedIn) {
+                    showToast('🔒 Please login first');
+                    return;
+                }
+                if (!cachedData || cachedData.length === 0) {
+                    showToast('⚠️ No data available to generate report');
+                    return;
+                }
+                generateReport();
+            });
+
+            // Close report
+            function closeReport() {
+                reportOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            reportCloseBtn.addEventListener('click', closeReport);
+            reportOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeReport();
+                }
+            });
+
+            // Keyboard shortcut - Escape to close
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && reportOverlay.classList.contains('active')) {
+                    closeReport();
                 }
             });
 
@@ -2476,7 +3011,6 @@
                 };
 
                 try {
-                    // Submit both data sets
                     const [secondaryResult, teacherResult] = await Promise.all([
                         supabaseClient.from('schools_data').insert([secondaryPayload]),
                         supabaseClient.from('schools_data').insert([teacherPayload])
