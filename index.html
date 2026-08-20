@@ -1160,7 +1160,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SECURE ADMIN LOGIN
+  // SECURE ADMIN LOGIN - SERVER SIDE VERIFICATION
   // ============================================================
   adminHeaderBtn.addEventListener('click', function() {
     adminOverlay.classList.add('active');
@@ -1199,6 +1199,10 @@ button{font-family:inherit;}
         return;
       }
 
+      // ============================================================
+      // SECURE LOGIN: Call the database function to verify password
+      // The password is sent to the server and verified there using pgcrypto
+      // ============================================================
       const { data, error } = await supabaseClient
         .rpc('verify_admin_login', { p_district: district, p_password: password });
 
@@ -1212,6 +1216,8 @@ button{font-family:inherit;}
         isLoggedIn = true;
         loggedInDistrict = district;
 
+        // Set the session context for RLS (best-effort — see loadAdminData/deleteRecord,
+        // which no longer depend on this surviving across pooled connections)
         await supabaseClient.rpc('set_current_district', { district_name: district });
 
         adminLoginSection.style.display = 'none';
@@ -1257,23 +1263,29 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // DELETE
+  // DELETE — scoped to the logged-in district at the query level
+  // (RLS no longer gates this on a session GUC that pooling can drop)
   // ============================================================
   async function deleteRecord(id) {
-    if (!isLoggedIn) { showToast('🔒 Please sign in first'); return; }
+    if (!isLoggedIn || !loggedInDistrict) { showToast('🔒 Please sign in first'); return; }
     if (!supabaseClient) { showToast('⚠️ Database not connected'); return; }
     if (!confirm('Delete this record? This cannot be undone.')) return;
     try {
-      const { error } = await supabaseClient
+      const { error, count } = await supabaseClient
         .from('schools_data')
-        .delete()
-        .eq('id', id);
+        .delete({ count: 'exact' })
+        .eq('id', id)
+        .eq('district', loggedInDistrict);
       if (error) {
         if (error.message.includes('row-level security')) {
           showToast('❌ You can only delete records from your district');
         } else {
           showToast('❌ Delete error: ' + error.message);
         }
+        return;
+      }
+      if (!count) {
+        showToast('❌ Record not found in your district');
         return;
       }
       showToast('✅ Record deleted');
@@ -1283,7 +1295,7 @@ button{font-family:inherit;}
   window.deleteRecord = deleteRecord;
 
   // ============================================================
-  // LOAD ADMIN DATA
+  // LOAD ADMIN DATA — scoped to the logged-in district at the query level
   // ============================================================
   async function loadAdminData() {
     if (!isLoggedIn || !loggedInDistrict) {
@@ -1302,6 +1314,7 @@ button{font-family:inherit;}
       let query = supabaseClient
         .from('schools_data')
         .select('*')
+        .eq('district', loggedInDistrict)
         .order('created_at', { ascending: false });
 
       if (filterType !== 'all') {
@@ -1561,6 +1574,7 @@ button{font-family:inherit;}
       const { data, error } = await supabaseClient
         .from('schools_data')
         .select('*')
+        .eq('district', loggedInDistrict)
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) { showToast('No data to export'); return; }
@@ -1571,6 +1585,7 @@ button{font-family:inherit;}
       const wb = XLSX.utils.book_new();
       const dateTag = new Date().toISOString().slice(0,10);
 
+      // SUMMARY SHEET
       const sum = (arr, f) => arr.reduce((s,r)=>s+(parseInt(r[f])||0),0);
       const summaryRows = [
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD'],
@@ -1593,6 +1608,7 @@ button{font-family:inherit;}
       wsSummary['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:1} }, { s:{r:1,c:0}, e:{r:1,c:1} }];
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
 
+      // PRIMARY SHEET
       buildSheet(wb, 'Primary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON PRIMARY SCHOOLS AND TEACHERS — 2026'],
         primaryData,
@@ -1637,6 +1653,7 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
+      // SECONDARY SHEET
       buildSheet(wb, 'Secondary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON SECONDARY SCHOOLS AND TEACHERS — 2026'],
         secondaryData,
@@ -1675,6 +1692,7 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
+      // TEACHER SUBJECT SHEET
       const teacherCols = [
         {header:'S/NO', get:(r,i)=>i+1, type:'text', total:false},
         {header:'DISTRICT', get:r=>r.district||loggedInDistrict, type:'text'},
@@ -1711,20 +1729,7 @@ button{font-family:inherit;}
   }
 
   // ============================================================
-  // FIX: Set district context before each insert
-  // ============================================================
-  async function setDistrictContext(district) {
-    try {
-      await supabaseClient.rpc('set_current_district', { district_name: district });
-      return true;
-    } catch (err) {
-      console.warn('Could not set district context:', err);
-      return false;
-    }
-  }
-
-  // ============================================================
-  // SUBMIT — PRIMARY (with RLS fix)
+  // SUBMIT — PRIMARY
   // ============================================================
   document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1732,9 +1737,6 @@ button{font-family:inherit;}
     if (!priNameSelect.value) { showToast('⚠️ Please select your school'); return; }
     if (hasNegativeValues(primaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
-
-    // Set the district context for RLS
-    await setDistrictContext(district);
 
     const payload = {
       district: district, school_type: 'primary',
@@ -1778,14 +1780,7 @@ button{font-family:inherit;}
 
     try {
       const { error } = await supabaseClient.from('schools_data').insert([payload]);
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-        } else {
-          throw error;
-        }
-        return;
-      }
+      if (error) throw error;
       showToast('✅ Primary school data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
@@ -1794,7 +1789,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SUBMIT — SECONDARY + TEACHER DATA (with RLS fix)
+  // SUBMIT — SECONDARY + TEACHER DATA
   // ============================================================
   document.getElementById('submitSecondaryComplete').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1802,9 +1797,6 @@ button{font-family:inherit;}
     if (!secNameSelect.value) { showToast('⚠️ Please select your school'); return; }
     if (hasNegativeValues(secondaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
-
-    // Set the district context for RLS
-    await setDistrictContext(district);
 
     const secondaryPayload = {
       district: district, school_type: 'secondary',
@@ -1852,30 +1844,12 @@ button{font-family:inherit;}
     });
 
     try {
-      // Set context for teacher payload as well
-      if (teacherPayload.district !== district) {
-        await setDistrictContext(teacherPayload.district);
-      }
-
       const [secondaryResult, teacherResult] = await Promise.all([
         supabaseClient.from('schools_data').insert([secondaryPayload]),
         supabaseClient.from('schools_data').insert([teacherPayload])
       ]);
-      
-      if (secondaryResult.error) {
-        if (secondaryResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw secondaryResult.error;
-      }
-      if (teacherResult.error) {
-        if (teacherResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw teacherResult.error;
-      }
+      if (secondaryResult.error) throw secondaryResult.error;
+      if (teacherResult.error) throw teacherResult.error;
       showToast('✅ Secondary and teacher data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
