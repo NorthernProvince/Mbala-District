@@ -14,6 +14,9 @@
 <style>
 /* ============================================================
    DESIGN TOKENS
+   Palette: paper (#F4F5F1), ledger-green (#0B3D2E), brass (#B8862E),
+   plum (#4B2E62, Part B only), oxblood (#8C2F2F, reports/danger), ink (#15201A)
+   Type: Fraunces (display) · IBM Plex Sans (body/UI) · IBM Plex Mono (data)
    ============================================================ */
 :root{
   --paper:#F4F5F1;
@@ -110,6 +113,7 @@ button{font-family:inherit;}
 @media (min-width:720px){ .shell{max-width:760px;padding-top:28px;} }
 @media (min-width:1024px){ .shell{max-width:880px;} }
 
+/* Letterhead / district selector */
 .letterhead{
   background:var(--surface);
   border:1px solid var(--border);
@@ -131,6 +135,7 @@ button{font-family:inherit;}
 .letterhead select:focus{border-color:var(--green);}
 .letterhead .hint{font-size:12px;color:var(--ink-faint);margin-top:8px;}
 
+/* Segmented tabs */
 .tabs{
   display:flex;background:var(--surface-sunken);border-radius:40px;padding:5px;
   margin-bottom:20px;border:1px solid var(--border);gap:4px;
@@ -144,6 +149,7 @@ button{font-family:inherit;}
 .section{display:block;}
 .section.hidden{display:none;}
 
+/* Section eyebrow (sequential steps — a real workflow order) */
 .step{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
   padding:20px;margin-bottom:14px;box-shadow:var(--shadow-sm);
@@ -184,7 +190,9 @@ button{font-family:inherit;}
 .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 @media (max-width:420px){ .row-3{grid-template-columns:1fr 1fr;} }
 
-.subsection{border-top:1px dashed var(--border-strong);padding-top:14px;margin-top:4px;}
+.subsection{
+  border-top:1px dashed var(--border-strong);padding-top:14px;margin-top:4px;
+}
 .subsection-title{
   font-size:12.5px;font-weight:700;color:var(--green-dark);display:flex;align-items:center;
   gap:7px;margin-bottom:10px;
@@ -196,11 +204,27 @@ button{font-family:inherit;}
 }
 .infra-label{font-size:10.5px;font-weight:600;color:var(--ink-faint);text-align:center;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
 .gender-label{font-size:10px;color:var(--ink-faint);text-align:center;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.enrol-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 0.7fr;gap:6px;align-items:center;}
+.enrol-row{display:grid;grid-template-columns:1.3fr 0.8fr 0.8fr 0.6fr;gap:5px;align-items:center;}
 .enrol-row + .enrol-row{margin-top:7px;}
-.enrol-row label{font-size:12px;font-weight:500;color:var(--ink-soft);}
-.enrol-sum{font-family:var(--font-mono);font-size:11.5px;text-align:center;color:var(--brass-dark);font-weight:600;}
+.enrol-row label{font-size:11.5px;font-weight:500;color:var(--ink-soft);line-height:1.2;}
+.enrol-row input[type="number"]{
+  width:100%;min-width:0;box-sizing:border-box;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:8px;
+  padding:6px 2px;font-size:12.5px;font-family:var(--font-mono);text-align:center;
+  outline:none;-moz-appearance:textfield;
+}
+.enrol-row input[type="number"]:focus{border-color:var(--green);box-shadow:0 0 0 2px var(--green-tint);}
+.enrol-row input[type="number"]::-webkit-outer-spin-button,
+.enrol-row input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.enrol-sum{font-family:var(--font-mono);font-size:11px;text-align:center;color:var(--brass-dark);font-weight:600;padding:0 2px;}
+@media (max-width:380px){
+  .enrol-row{grid-template-columns:1.1fr 0.85fr 0.85fr 0.55fr;gap:4px;}
+  .enrol-row label{font-size:10.5px;}
+  .enrol-row input[type="number"]{font-size:11.5px;padding:6px 1px;}
+  .enrol-sum{font-size:10px;}
+}
 
+/* Buttons */
 .btn{
   background:var(--green);border:1px solid var(--green-dark);padding:14px 18px;border-radius:60px;
   color:#fff;font-weight:700;font-size:14.5px;display:flex;align-items:center;justify-content:center;
@@ -214,6 +238,7 @@ button{font-family:inherit;}
 .btn-ghost{background:var(--surface-sunken);border:1px solid var(--border);color:var(--ink-soft);}
 .btn-sm{width:auto;padding:9px 16px;font-size:12.5px;}
 
+/* Toast */
 .toast{
   position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
   background:var(--ink);color:#fff;padding:12px 20px;border-radius:60px;font-size:13.5px;
@@ -231,7 +256,7 @@ button{font-family:inherit;}
 }
 .footer-note strong{color:var(--ink-soft);}
 
-/* Part B */
+/* Part B — distinct plum accent */
 .part-b{
   background:var(--surface);border:1.5px solid var(--plum);border-left:5px solid var(--plum);
   border-radius:var(--radius-md);padding:20px;margin-top:20px;box-shadow:var(--shadow-sm);
@@ -268,7 +293,7 @@ button{font-family:inherit;}
 .subject-empty{text-align:center;padding:24px;color:var(--ink-faint);font-size:13px;}
 
 /* ============================================================
-   OVERLAYS
+   OVERLAYS (Admin + Report)
    ============================================================ */
 .overlay{
   display:none;position:fixed;inset:0;background:rgba(11,20,15,0.55);z-index:500;
@@ -295,6 +320,7 @@ button{font-family:inherit;}
 }
 .overlay-body{padding:20px 18px 40px;}
 
+/* Admin login */
 .login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px;box-shadow:var(--shadow-sm);}
 .login-card h3{font-family:var(--font-display);font-size:18px;font-weight:560;color:var(--green-dark);margin-bottom:6px;}
 .login-card p{font-size:13px;color:var(--ink-soft);margin-bottom:18px;}
@@ -311,6 +337,7 @@ button{font-family:inherit;}
 
 .logged-in-banner{font-size:13px;color:var(--green-dark);display:flex;align-items:center;gap:7px;font-weight:600;}
 
+/* KPI stat row */
 .stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
 @media (min-width:480px){ .stat-row{grid-template-columns:repeat(4,1fr);} }
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
@@ -342,7 +369,7 @@ button{font-family:inherit;}
 .empty-state p{font-size:13.5px;max-width:280px;margin:0 auto;}
 
 /* ============================================================
-   REPORT
+   REPORT DOCUMENT
    ============================================================ */
 .report-doc{background:var(--surface);border-radius:var(--radius-md);padding:26px 22px;position:relative;overflow:hidden;}
 .report-watermark{position:absolute;top:50%;left:50%;width:340px;height:340px;transform:translate(-50%,-50%);opacity:0.045;pointer-events:none;}
@@ -901,8 +928,12 @@ button{font-family:inherit;}
   let cachedData = null;
 
   // ============================================================
-  // SEAL
+  // SEAL — official Zambian coat of arms, hosted in the project's
+  // GitHub repo. Falls back to a drawn SVG emblem automatically if
+  // the image ever fails to load (repo moved, renamed, made private…).
   // ============================================================
+  const COAT_OF_ARMS_URL = 'https://raw.githubusercontent.com/NorthernProvince/northernpeo/main/image/coat_arms.png';
+
   function sealMarkup(ringColor, inkColor) {
     ringColor = ringColor || '#B8862E';
     inkColor = inkColor || '#0B3D2E';
@@ -914,7 +945,17 @@ button{font-family:inherit;}
       '<text x="50" y="76" text-anchor="middle" font-size="6.4" letter-spacing="0.6" fill="' + inkColor + '" font-family="IBM Plex Sans, sans-serif" font-weight="500">EDUCATION REGISTRY</text>' +
       '</svg>';
   }
-  document.getElementById('topbarSeal').innerHTML = sealMarkup('#E7C77A', '#ffffff');
+  // Exposed globally so inline onerror handlers (used in dynamically-built
+  // report HTML) can reach it without re-declaring the function.
+  window.__sealFallback = sealMarkup;
+
+  function logoMarkup(ringColor, inkColor) {
+    const fallbackArgs = "'" + (ringColor || '') + "','" + (inkColor || '') + "'";
+    return '<img src="' + COAT_OF_ARMS_URL + '" alt="Zambian coat of arms" ' +
+      'style="width:100%;height:100%;object-fit:contain;" ' +
+      'onerror="this.onerror=null;this.outerHTML=window.__sealFallback(' + fallbackArgs + ');">';
+  }
+  document.getElementById('topbarSeal').innerHTML = logoMarkup('#E7C77A', '#ffffff');
 
   // ============================================================
   // DOM REFS
@@ -954,7 +995,7 @@ button{font-family:inherit;}
   const subjectFilter = document.getElementById('subjectFilter');
 
   // ============================================================
-  // INIT
+  // INIT — districts, subjects, supabase
   // ============================================================
   function populateDistrictDropdowns() {
     [districtSelect, adminDistrictSelect, partBDistrictSelect].forEach(sel => {
@@ -979,6 +1020,7 @@ button{font-family:inherit;}
     });
     subjectContainer.innerHTML = html;
 
+    // Auto-calc shortfall = max(required - available, 0)
     document.querySelectorAll('.subj-req, .subj-avail').forEach(inp => {
       inp.addEventListener('input', function() {
         const key = this.dataset.key;
@@ -1008,7 +1050,7 @@ button{font-family:inherit;}
   }
 
   // ============================================================
-  // AUTO-CALC HELPERS
+  // AUTO-CALC HELPERS (infrastructure totals, teacher totals, enrolment sums)
   // ============================================================
   function wireGroupTotal(groupId, targetId) {
     const inputs = document.querySelectorAll('.calc-src[data-group="' + groupId + '"]');
@@ -1160,7 +1202,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SECURE ADMIN LOGIN
+  // ADMIN LOGIN
   // ============================================================
   adminHeaderBtn.addEventListener('click', function() {
     adminOverlay.classList.add('active');
@@ -1176,7 +1218,6 @@ button{font-family:inherit;}
       loginError.classList.remove('show');
     }
   });
-
   function closeAdmin() { adminOverlay.classList.remove('active'); document.body.style.overflow = ''; }
   closeAdminBtn.addEventListener('click', closeAdmin);
   adminOverlay.addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
@@ -1184,7 +1225,6 @@ button{font-family:inherit;}
   adminLoginBtn.addEventListener('click', async function() {
     const district = adminDistrictSelect.value;
     const password = adminPassInput.value.trim();
-
     if (!district) { loginError.textContent = 'Please select your district.'; loginError.classList.add('show'); return; }
     if (!password) { loginError.textContent = 'Please enter your password.'; loginError.classList.add('show'); return; }
 
@@ -1198,60 +1238,40 @@ button{font-family:inherit;}
         loginError.textContent = 'Database connection failed.'; loginError.classList.add('show');
         return;
       }
+      const { data, error } = await supabaseClient.from('admins').select('password').eq('district', district).maybeSingle();
+      if (error) { loginError.textContent = 'Database error: ' + error.message; loginError.classList.add('show'); return; }
+      if (!data) { loginError.textContent = 'No admin account set up yet for ' + district + '. Contact the system administrator.'; loginError.classList.add('show'); return; }
 
-      const { data, error } = await supabaseClient
-        .rpc('verify_admin_login', { p_district: district, p_password: password });
-
-      if (error) {
-        loginError.textContent = 'Login error: ' + error.message;
-        loginError.classList.add('show');
-        return;
-      }
-
-      if (data && data.success) {
-        isLoggedIn = true;
-        loggedInDistrict = district;
-
-        await supabaseClient.rpc('set_current_district', { district_name: district });
-
+      if (password === data.password) {
+        isLoggedIn = true; loggedInDistrict = district;
         adminLoginSection.style.display = 'none';
         adminContent.style.display = 'block';
         loggedInDistrictLabel.textContent = district;
-
         sessionStorage.setItem('adminLogged', 'true');
         sessionStorage.setItem('adminDistrict', district);
-
-        await loadAdminData();
-        showToast('✅ Signed in as ' + district);
+        loadAdminData();
+        showToast('✅ ' + district + ' admin access granted');
         adminPassInput.value = '';
       } else {
-        loginError.textContent = data?.message || 'Invalid credentials. Please try again.';
-        loginError.classList.add('show');
-        adminPassInput.value = '';
-        adminPassInput.focus();
+        loginError.textContent = 'Incorrect password. Please try again.'; loginError.classList.add('show');
+        adminPassInput.value = ''; adminPassInput.focus();
       }
     } catch (err) {
-      loginError.textContent = 'Sign-in error: ' + err.message;
-      loginError.classList.add('show');
-      console.error('Login error:', err);
+      loginError.textContent = 'Sign-in error: ' + err.message; loginError.classList.add('show');
     } finally {
       loginLoading.classList.remove('show');
       adminLoginBtn.disabled = false;
       adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign in';
     }
   });
-
   adminPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); adminLoginBtn.click(); } });
 
   adminLogoutBtn.addEventListener('click', function() {
-    isLoggedIn = false;
-    loggedInDistrict = null;
-    sessionStorage.removeItem('adminLogged');
-    sessionStorage.removeItem('adminDistrict');
+    isLoggedIn = false; loggedInDistrict = null;
+    sessionStorage.removeItem('adminLogged'); sessionStorage.removeItem('adminDistrict');
     adminLoginSection.style.display = 'block';
     adminContent.style.display = 'none';
-    adminPassInput.value = '';
-    adminDistrictSelect.value = '';
+    adminPassInput.value = ''; adminDistrictSelect.value = '';
     loginError.classList.remove('show');
     showToast('🔒 Signed out');
   });
@@ -1264,18 +1284,8 @@ button{font-family:inherit;}
     if (!supabaseClient) { showToast('⚠️ Database not connected'); return; }
     if (!confirm('Delete this record? This cannot be undone.')) return;
     try {
-      const { error } = await supabaseClient
-        .from('schools_data')
-        .delete()
-        .eq('id', id);
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          showToast('❌ You can only delete records from your district');
-        } else {
-          showToast('❌ Delete error: ' + error.message);
-        }
-        return;
-      }
+      const { error } = await supabaseClient.from('schools_data').delete().eq('id', id).eq('district', loggedInDistrict);
+      if (error) { showToast('❌ Delete error: ' + error.message); return; }
       showToast('✅ Record deleted');
       await loadAdminData();
     } catch (err) { showToast('❌ Error: ' + err.message); }
@@ -1298,36 +1308,19 @@ button{font-family:inherit;}
     try {
       adminList.innerHTML = emptyState('fa-spinner fa-spin', 'Loading records…');
       const filterType = filterDataType.value;
-
-      let query = supabaseClient
-        .from('schools_data')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (filterType !== 'all') {
-        query = query.eq('school_type', filterType);
-      }
-
+      let query = supabaseClient.from('schools_data').select('*').eq('district', loggedInDistrict).order('created_at', { ascending: false });
+      if (filterType !== 'all') query = query.eq('school_type', filterType);
       const { data, error } = await query;
-
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          adminList.innerHTML = emptyState('fa-lock', 'RLS is active. Please ensure you are properly signed in.');
-        } else {
-          throw error;
-        }
-        return;
-      }
+      if (error) throw error;
 
       cachedData = data || [];
       updateStats();
 
       if (!data || data.length === 0) {
-        adminList.innerHTML = emptyState('fa-inbox', 'No submissions yet for ' + loggedInDistrict + '.');
+        adminList.innerHTML = emptyState('fa-inbox', 'No submissions yet for ' + loggedInDistrict + '. Records will appear here as field officers submit data.');
         dataCount.textContent = '0 records found';
         return;
       }
-
       const count = data.length;
       dataCount.textContent = count + ' record' + (count > 1 ? 's' : '') + ' found';
 
@@ -1389,10 +1382,7 @@ button{font-family:inherit;}
   // REPORT
   // ============================================================
   function generateReport() {
-    if (!cachedData || cachedData.length === 0) {
-      showToast('⚠️ No data available to generate a report');
-      return;
-    }
+    if (!cachedData || cachedData.length === 0) { showToast('⚠️ No data available to generate a report'); return; }
     const district = loggedInDistrict;
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-ZM', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -1403,9 +1393,9 @@ button{font-family:inherit;}
     const teacherData = cachedData.filter(r => r.school_type === 'teacher_subject');
     const sum = (arr, field) => arr.reduce((s, r) => s + (parseInt(r[field]) || 0), 0);
 
-    let html = '<div class="report-watermark">' + sealMarkup('#0B3D2E', '#0B3D2E') + '</div>' +
+    let html = '<div class="report-watermark">' + logoMarkup('#0B3D2E', '#0B3D2E') + '</div>' +
       '<div class="report-header">' +
-        '<div class="seal-lg">' + sealMarkup() + '</div>' +
+        '<div class="seal-lg">' + logoMarkup() + '</div>' +
         '<div class="kicker">Republic of Zambia · Ministry of Education</div>' +
         '<h1>NORTHERN PROVINCE — ' + district.toUpperCase() + ' DISTRICT</h1>' +
         '<h2>Education Statistical Report</h2>' +
@@ -1514,7 +1504,6 @@ button{font-family:inherit;}
     if (!isLoggedIn) { showToast('🔒 Please sign in first'); return; }
     generateReport();
   });
-
   function closeReport() { reportOverlay.classList.remove('active'); document.body.style.overflow = ''; }
   reportCloseBtn.addEventListener('click', closeReport);
   reportOverlay.addEventListener('click', function(e) { if (e.target === this) closeReport(); });
@@ -1526,7 +1515,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // EXCEL EXPORT
+  // EXCEL EXPORT — column-definition driven (fixes prior totals bug)
   // ============================================================
   function buildSheet(wb, sheetName, titleLines, rows, columns) {
     const headerRow = columns.map(c => c.header);
@@ -1558,10 +1547,7 @@ button{font-family:inherit;}
     if (!isLoggedIn || !loggedInDistrict) { showToast('🔒 Please sign in first'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
     try {
-      const { data, error } = await supabaseClient
-        .from('schools_data')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabaseClient.from('schools_data').select('*').eq('district', loggedInDistrict).order('created_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) { showToast('No data to export'); return; }
 
@@ -1571,6 +1557,7 @@ button{font-family:inherit;}
       const wb = XLSX.utils.book_new();
       const dateTag = new Date().toISOString().slice(0,10);
 
+      // SUMMARY SHEET
       const sum = (arr, f) => arr.reduce((s,r)=>s+(parseInt(r[f])||0),0);
       const summaryRows = [
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD'],
@@ -1593,6 +1580,7 @@ button{font-family:inherit;}
       wsSummary['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:1} }, { s:{r:1,c:0}, e:{r:1,c:1} }];
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
 
+      // PRIMARY SHEET
       buildSheet(wb, 'Primary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON PRIMARY SCHOOLS AND TEACHERS — 2026'],
         primaryData,
@@ -1637,6 +1625,7 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
+      // SECONDARY SHEET
       buildSheet(wb, 'Secondary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON SECONDARY SCHOOLS AND TEACHERS — 2026'],
         secondaryData,
@@ -1675,6 +1664,7 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
+      // TEACHER SUBJECT SHEET
       const teacherCols = [
         {header:'S/NO', get:(r,i)=>i+1, type:'text', total:false},
         {header:'DISTRICT', get:r=>r.district||loggedInDistrict, type:'text'},
@@ -1704,27 +1694,14 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // VALIDATION
+  // VALIDATION HELPER
   // ============================================================
   function hasNegativeValues(scopeEl) {
     return Array.from(scopeEl.querySelectorAll('input[type="number"]')).some(i => parseFloat(i.value) < 0);
   }
 
   // ============================================================
-  // FIX: Set district context before each insert
-  // ============================================================
-  async function setDistrictContext(district) {
-    try {
-      await supabaseClient.rpc('set_current_district', { district_name: district });
-      return true;
-    } catch (err) {
-      console.warn('Could not set district context:', err);
-      return false;
-    }
-  }
-
-  // ============================================================
-  // SUBMIT — PRIMARY (with RLS fix)
+  // SUBMIT — PRIMARY
   // ============================================================
   document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1732,9 +1709,6 @@ button{font-family:inherit;}
     if (!priNameSelect.value) { showToast('⚠️ Please select your school'); return; }
     if (hasNegativeValues(primaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
-
-    // Set the district context for RLS
-    await setDistrictContext(district);
 
     const payload = {
       district: district, school_type: 'primary',
@@ -1778,14 +1752,7 @@ button{font-family:inherit;}
 
     try {
       const { error } = await supabaseClient.from('schools_data').insert([payload]);
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-        } else {
-          throw error;
-        }
-        return;
-      }
+      if (error) throw error;
       showToast('✅ Primary school data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
@@ -1794,7 +1761,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SUBMIT — SECONDARY + TEACHER DATA (with RLS fix)
+  // SUBMIT — SECONDARY + TEACHER DATA
   // ============================================================
   document.getElementById('submitSecondaryComplete').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1802,9 +1769,6 @@ button{font-family:inherit;}
     if (!secNameSelect.value) { showToast('⚠️ Please select your school'); return; }
     if (hasNegativeValues(secondaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
-
-    // Set the district context for RLS
-    await setDistrictContext(district);
 
     const secondaryPayload = {
       district: district, school_type: 'secondary',
@@ -1852,30 +1816,12 @@ button{font-family:inherit;}
     });
 
     try {
-      // Set context for teacher payload as well
-      if (teacherPayload.district !== district) {
-        await setDistrictContext(teacherPayload.district);
-      }
-
       const [secondaryResult, teacherResult] = await Promise.all([
         supabaseClient.from('schools_data').insert([secondaryPayload]),
         supabaseClient.from('schools_data').insert([teacherPayload])
       ]);
-      
-      if (secondaryResult.error) {
-        if (secondaryResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw secondaryResult.error;
-      }
-      if (teacherResult.error) {
-        if (teacherResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw teacherResult.error;
-      }
+      if (secondaryResult.error) throw secondaryResult.error;
+      if (teacherResult.error) throw teacherResult.error;
       showToast('✅ Secondary and teacher data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
