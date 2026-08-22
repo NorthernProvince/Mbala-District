@@ -1311,8 +1311,24 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // DELETE — FIXED
+  // DELETE — FIXED (Using event delegation)
   // ============================================================
+  // Use event delegation on the admin list container
+  document.getElementById('adminList').addEventListener('click', function(e) {
+    const deleteBtn = e.target.closest('.delete-btn');
+    if (!deleteBtn) return;
+    
+    const item = deleteBtn.closest('.admin-item');
+    if (!item) return;
+    
+    const id = parseInt(item.dataset.id);
+    if (!id) return;
+    
+    // Call the delete function
+    deleteRecord(id);
+  });
+
+  // The actual delete function
   async function deleteRecord(id) {
     if (!isLoggedIn) { 
         showToast('🔒 Please sign in first'); 
@@ -1325,8 +1341,9 @@ button{font-family:inherit;}
     if (!confirm('⚠️ Delete this record? This cannot be undone.')) return;
     
     try {
-        // Show loading state on the button
-        const btn = document.querySelector(`button[onclick="deleteRecord(${id})"]`);
+        // Find the item and show loading state
+        const item = document.querySelector(`.admin-item[data-id="${id}"]`);
+        const btn = item ? item.querySelector('.delete-btn') : null;
         if (btn) {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             btn.disabled = true;
@@ -1343,6 +1360,11 @@ button{font-family:inherit;}
             } else {
                 showToast('❌ Delete error: ' + error.message);
             }
+            // Reset button
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+                btn.disabled = false;
+            }
             return;
         }
         
@@ -1353,13 +1375,6 @@ button{font-family:inherit;}
     } catch (err) {
         showToast('❌ Error: ' + err.message);
         console.error(err);
-    } finally {
-        // Reset button if it exists
-        const btn = document.querySelector(`button[onclick="deleteRecord(${id})"]`);
-        if (btn) {
-            btn.innerHTML = '<i class="fas fa-trash"></i> Delete';
-            btn.disabled = false;
-        }
     }
   }
   // Make deleteRecord available globally
@@ -1426,7 +1441,7 @@ button{font-family:inherit;}
           '<span class="school-type" style="background:' + typeColor + '20;color:' + typeColor + ';">' + typeLabel + '</span></div>' +
           '<div class="details">' + details + '</div>' +
           '<div class="timestamp"><span><i class="far fa-calendar-alt"></i> ' + (row.created_at ? new Date(row.created_at).toLocaleString() : '') + '</span>' +
-          '<button class="delete-btn" onclick="deleteRecord(' + row.id + ')"><i class="fas fa-trash"></i> Delete</button></div></div>';
+          '<button class="delete-btn" data-id="' + row.id + '"><i class="fas fa-trash"></i> Delete</button></div></div>';
       });
       adminList.innerHTML = html;
     } catch (err) {
