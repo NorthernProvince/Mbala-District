@@ -928,9 +928,7 @@ button{font-family:inherit;}
   let cachedData = null;
 
   // ============================================================
-  // SEAL — official Zambian coat of arms, hosted in the project's
-  // GitHub repo. Falls back to a drawn SVG emblem automatically if
-  // the image ever fails to load (repo moved, renamed, made private…).
+  // SEAL — official Zambian coat of arms
   // ============================================================
   const COAT_OF_ARMS_URL = 'https://raw.githubusercontent.com/NorthernProvince/northernpeo/main/image/coat_arms.png';
 
@@ -945,15 +943,12 @@ button{font-family:inherit;}
       '<text x="50" y="76" text-anchor="middle" font-size="6.4" letter-spacing="0.6" fill="' + inkColor + '" font-family="IBM Plex Sans, sans-serif" font-weight="500">EDUCATION REGISTRY</text>' +
       '</svg>';
   }
-  // Exposed globally so inline onerror handlers (used in dynamically-built
-  // report HTML) can reach it without re-declaring the function.
   window.__sealFallback = sealMarkup;
 
   function logoMarkup(ringColor, inkColor) {
-    const fallbackArgs = "'" + (ringColor || '') + "','" + (inkColor || '') + "'";
     return '<img src="' + COAT_OF_ARMS_URL + '" alt="Zambian coat of arms" ' +
       'style="width:100%;height:100%;object-fit:contain;" ' +
-      'onerror="this.onerror=null;this.outerHTML=window.__sealFallback(' + fallbackArgs + ');">';
+      'onerror="this.onerror=null;this.outerHTML=window.__sealFallback(\'' + (ringColor||'') + '\',\'' + (inkColor||'') + '\');">';
   }
   document.getElementById('topbarSeal').innerHTML = logoMarkup('#E7C77A', '#ffffff');
 
@@ -1020,7 +1015,6 @@ button{font-family:inherit;}
     });
     subjectContainer.innerHTML = html;
 
-    // Auto-calc shortfall = max(required - available, 0)
     document.querySelectorAll('.subj-req, .subj-avail').forEach(inp => {
       inp.addEventListener('input', function() {
         const key = this.dataset.key;
@@ -1050,7 +1044,7 @@ button{font-family:inherit;}
   }
 
   // ============================================================
-  // AUTO-CALC HELPERS (infrastructure totals, teacher totals, enrolment sums)
+  // AUTO-CALC HELPERS
   // ============================================================
   function wireGroupTotal(groupId, targetId) {
     const inputs = document.querySelectorAll('.calc-src[data-group="' + groupId + '"]');
@@ -1218,6 +1212,7 @@ button{font-family:inherit;}
       loginError.classList.remove('show');
     }
   });
+
   function closeAdmin() { adminOverlay.classList.remove('active'); document.body.style.overflow = ''; }
   closeAdminBtn.addEventListener('click', closeAdmin);
   adminOverlay.addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
@@ -1225,8 +1220,17 @@ button{font-family:inherit;}
   adminLoginBtn.addEventListener('click', async function() {
     const district = adminDistrictSelect.value;
     const password = adminPassInput.value.trim();
-    if (!district) { loginError.textContent = 'Please select your district.'; loginError.classList.add('show'); return; }
-    if (!password) { loginError.textContent = 'Please enter your password.'; loginError.classList.add('show'); return; }
+
+    if (!district) { 
+      loginError.textContent = 'Please select your district.'; 
+      loginError.classList.add('show'); 
+      return; 
+    }
+    if (!password) { 
+      loginError.textContent = 'Please enter your password.'; 
+      loginError.classList.add('show'); 
+      return; 
+    }
 
     loginLoading.classList.add('show');
     loginError.classList.remove('show');
@@ -1235,43 +1239,72 @@ button{font-family:inherit;}
 
     try {
       if (!supabaseClient && !initSupabase()) {
-        loginError.textContent = 'Database connection failed.'; loginError.classList.add('show');
+        loginError.textContent = 'Database connection failed.';
+        loginError.classList.add('show');
         return;
       }
-      const { data, error } = await supabaseClient.from('admins').select('password').eq('district', district).maybeSingle();
-      if (error) { loginError.textContent = 'Database error: ' + error.message; loginError.classList.add('show'); return; }
-      if (!data) { loginError.textContent = 'No admin account set up yet for ' + district + '. Contact the system administrator.'; loginError.classList.add('show'); return; }
 
-      if (password === data.password) {
-        isLoggedIn = true; loggedInDistrict = district;
+      // Call the secure verification function
+      const { data, error } = await supabaseClient
+        .rpc('verify_admin_login', { p_district: district, p_password: password });
+
+      if (error) {
+        loginError.textContent = 'Login error: ' + error.message;
+        loginError.classList.add('show');
+        console.error('RPC Error:', error);
+        return;
+      }
+
+      if (data && data.success) {
+        isLoggedIn = true;
+        loggedInDistrict = district;
+
+        // Set the district context for RLS
+        await supabaseClient.rpc('set_current_district', { district_name: district });
+
         adminLoginSection.style.display = 'none';
         adminContent.style.display = 'block';
         loggedInDistrictLabel.textContent = district;
+
         sessionStorage.setItem('adminLogged', 'true');
         sessionStorage.setItem('adminDistrict', district);
-        loadAdminData();
-        showToast('✅ ' + district + ' admin access granted');
+
+        await loadAdminData();
+        showToast('✅ Signed in as ' + district);
         adminPassInput.value = '';
       } else {
-        loginError.textContent = 'Incorrect password. Please try again.'; loginError.classList.add('show');
-        adminPassInput.value = ''; adminPassInput.focus();
+        loginError.textContent = data?.message || 'Invalid credentials. Please try again.';
+        loginError.classList.add('show');
+        adminPassInput.value = '';
+        adminPassInput.focus();
       }
     } catch (err) {
-      loginError.textContent = 'Sign-in error: ' + err.message; loginError.classList.add('show');
+      loginError.textContent = 'Sign-in error: ' + err.message;
+      loginError.classList.add('show');
+      console.error('Login error:', err);
     } finally {
       loginLoading.classList.remove('show');
       adminLoginBtn.disabled = false;
       adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign in';
     }
   });
-  adminPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); adminLoginBtn.click(); } });
+
+  adminPassInput.addEventListener('keydown', e => { 
+    if (e.key === 'Enter') { 
+      e.preventDefault(); 
+      adminLoginBtn.click(); 
+    } 
+  });
 
   adminLogoutBtn.addEventListener('click', function() {
-    isLoggedIn = false; loggedInDistrict = null;
-    sessionStorage.removeItem('adminLogged'); sessionStorage.removeItem('adminDistrict');
+    isLoggedIn = false;
+    loggedInDistrict = null;
+    sessionStorage.removeItem('adminLogged');
+    sessionStorage.removeItem('adminDistrict');
     adminLoginSection.style.display = 'block';
     adminContent.style.display = 'none';
-    adminPassInput.value = ''; adminDistrictSelect.value = '';
+    adminPassInput.value = '';
+    adminDistrictSelect.value = '';
     loginError.classList.remove('show');
     showToast('🔒 Signed out');
   });
@@ -1284,8 +1317,15 @@ button{font-family:inherit;}
     if (!supabaseClient) { showToast('⚠️ Database not connected'); return; }
     if (!confirm('Delete this record? This cannot be undone.')) return;
     try {
-      const { error } = await supabaseClient.from('schools_data').delete().eq('id', id).eq('district', loggedInDistrict);
-      if (error) { showToast('❌ Delete error: ' + error.message); return; }
+      const { error } = await supabaseClient.from('schools_data').delete().eq('id', id);
+      if (error) {
+        if (error.message.includes('row-level security')) {
+          showToast('❌ You can only delete records from your district');
+        } else {
+          showToast('❌ Delete error: ' + error.message);
+        }
+        return;
+      }
       showToast('✅ Record deleted');
       await loadAdminData();
     } catch (err) { showToast('❌ Error: ' + err.message); }
@@ -1308,7 +1348,7 @@ button{font-family:inherit;}
     try {
       adminList.innerHTML = emptyState('fa-spinner fa-spin', 'Loading records…');
       const filterType = filterDataType.value;
-      let query = supabaseClient.from('schools_data').select('*').eq('district', loggedInDistrict).order('created_at', { ascending: false });
+      let query = supabaseClient.from('schools_data').select('*').order('created_at', { ascending: false });
       if (filterType !== 'all') query = query.eq('school_type', filterType);
       const { data, error } = await query;
       if (error) throw error;
@@ -1504,6 +1544,7 @@ button{font-family:inherit;}
     if (!isLoggedIn) { showToast('🔒 Please sign in first'); return; }
     generateReport();
   });
+
   function closeReport() { reportOverlay.classList.remove('active'); document.body.style.overflow = ''; }
   reportCloseBtn.addEventListener('click', closeReport);
   reportOverlay.addEventListener('click', function(e) { if (e.target === this) closeReport(); });
@@ -1515,7 +1556,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // EXCEL EXPORT — column-definition driven (fixes prior totals bug)
+  // EXCEL EXPORT
   // ============================================================
   function buildSheet(wb, sheetName, titleLines, rows, columns) {
     const headerRow = columns.map(c => c.header);
@@ -1547,7 +1588,7 @@ button{font-family:inherit;}
     if (!isLoggedIn || !loggedInDistrict) { showToast('🔒 Please sign in first'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
     try {
-      const { data, error } = await supabaseClient.from('schools_data').select('*').eq('district', loggedInDistrict).order('created_at', { ascending: false });
+      const { data, error } = await supabaseClient.from('schools_data').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) { showToast('No data to export'); return; }
 
@@ -1557,7 +1598,6 @@ button{font-family:inherit;}
       const wb = XLSX.utils.book_new();
       const dateTag = new Date().toISOString().slice(0,10);
 
-      // SUMMARY SHEET
       const sum = (arr, f) => arr.reduce((s,r)=>s+(parseInt(r[f])||0),0);
       const summaryRows = [
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD'],
@@ -1580,7 +1620,6 @@ button{font-family:inherit;}
       wsSummary['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:1} }, { s:{r:1,c:0}, e:{r:1,c:1} }];
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
 
-      // PRIMARY SHEET
       buildSheet(wb, 'Primary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON PRIMARY SCHOOLS AND TEACHERS — 2026'],
         primaryData,
@@ -1625,7 +1664,6 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
-      // SECONDARY SHEET
       buildSheet(wb, 'Secondary Schools',
         [loggedInDistrict.toUpperCase() + ' DISTRICT EDUCATION BOARD', 'DATA ON SECONDARY SCHOOLS AND TEACHERS — 2026'],
         secondaryData,
@@ -1664,7 +1702,6 @@ button{font-family:inherit;}
           {header:'TEACHER SAMPLE', get:r=>r.teacher_sample||'', type:'text'}
         ]);
 
-      // TEACHER SUBJECT SHEET
       const teacherCols = [
         {header:'S/NO', get:(r,i)=>i+1, type:'text', total:false},
         {header:'DISTRICT', get:r=>r.district||loggedInDistrict, type:'text'},
@@ -1701,7 +1738,20 @@ button{font-family:inherit;}
   }
 
   // ============================================================
-  // SUBMIT — PRIMARY
+  // FIX: Set district context before each insert
+  // ============================================================
+  async function setDistrictContext(district) {
+    try {
+      await supabaseClient.rpc('set_current_district', { district_name: district });
+      return true;
+    } catch (err) {
+      console.warn('Could not set district context:', err);
+      return false;
+    }
+  }
+
+  // ============================================================
+  // SUBMIT — PRIMARY (WITH RLS FIX)
   // ============================================================
   document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1710,8 +1760,12 @@ button{font-family:inherit;}
     if (hasNegativeValues(primaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
 
+    // Set the district context for RLS
+    await setDistrictContext(district);
+
     const payload = {
-      district: district, school_type: 'primary',
+      district: district, 
+      school_type: 'primary',
       school_name: priNameSelect.value || 'N/A',
       status: document.getElementById('priStatus').value,
       distance: parseFloat(document.getElementById('priDist').value) || 0,
@@ -1752,7 +1806,14 @@ button{font-family:inherit;}
 
     try {
       const { error } = await supabaseClient.from('schools_data').insert([payload]);
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('row-level security')) {
+          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
+        } else {
+          throw error;
+        }
+        return;
+      }
       showToast('✅ Primary school data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
@@ -1761,7 +1822,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SUBMIT — SECONDARY + TEACHER DATA
+  // SUBMIT — SECONDARY + TEACHER DATA (WITH RLS FIX)
   // ============================================================
   document.getElementById('submitSecondaryComplete').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1770,8 +1831,12 @@ button{font-family:inherit;}
     if (hasNegativeValues(secondaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
 
+    // Set the district context for RLS
+    await setDistrictContext(district);
+
     const secondaryPayload = {
-      district: district, school_type: 'secondary',
+      district: district, 
+      school_type: 'secondary',
       school_name: secNameSelect.value || 'N/A',
       status: document.getElementById('secStatus').value,
       distance: parseFloat(document.getElementById('secDist').value) || 0,
@@ -1816,12 +1881,30 @@ button{font-family:inherit;}
     });
 
     try {
+      // Set context for teacher payload if different district
+      if (teacherPayload.district !== district) {
+        await setDistrictContext(teacherPayload.district);
+      }
+
       const [secondaryResult, teacherResult] = await Promise.all([
         supabaseClient.from('schools_data').insert([secondaryPayload]),
         supabaseClient.from('schools_data').insert([teacherPayload])
       ]);
-      if (secondaryResult.error) throw secondaryResult.error;
-      if (teacherResult.error) throw teacherResult.error;
+      
+      if (secondaryResult.error) {
+        if (secondaryResult.error.message.includes('row-level security')) {
+          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
+          return;
+        }
+        throw secondaryResult.error;
+      }
+      if (teacherResult.error) {
+        if (teacherResult.error.message.includes('row-level security')) {
+          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
+          return;
+        }
+        throw teacherResult.error;
+      }
       showToast('✅ Secondary and teacher data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
