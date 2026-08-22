@@ -1738,20 +1738,7 @@ button{font-family:inherit;}
   }
 
   // ============================================================
-  // FIX: Set district context before each insert
-  // ============================================================
-  async function setDistrictContext(district) {
-    try {
-      await supabaseClient.rpc('set_current_district', { district_name: district });
-      return true;
-    } catch (err) {
-      console.warn('Could not set district context:', err);
-      return false;
-    }
-  }
-
-  // ============================================================
-  // SUBMIT — PRIMARY (WITH RLS FIX)
+  // SUBMIT — PRIMARY (Using Database Function - Bypasses RLS)
   // ============================================================
   document.querySelector('[data-type="primary"]').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1760,61 +1747,55 @@ button{font-family:inherit;}
     if (hasNegativeValues(primaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
 
-    // Set the district context for RLS
-    await setDistrictContext(district);
-
-    const payload = {
-      district: district, 
-      school_type: 'primary',
-      school_name: priNameSelect.value || 'N/A',
-      status: document.getElementById('priStatus').value,
-      distance: parseFloat(document.getElementById('priDist').value) || 0,
-      emis: document.getElementById('priEmis').value || 'N/A',
-      perm_houses: parseInt(document.getElementById('priPermHouses').value) || 0,
-      incomp_houses: parseInt(document.getElementById('priIncompHouses').value) || 0,
-      temp_houses: parseInt(document.getElementById('priTempHouses').value) || 0,
-      perm_class: parseInt(document.getElementById('priPermClass').value) || 0,
-      incomp_class: parseInt(document.getElementById('priIncompClass').value) || 0,
-      temp_class: parseInt(document.getElementById('priTempClass').value) || 0,
-      desks: parseInt(document.getElementById('priDesks').value) || 0,
-      desk_shortfall: parseInt(document.getElementById('priDeskShort').value) || 0,
-      ece1_boys: parseInt(document.getElementById('priEce1Boys').value) || 0,
-      ece1_girls: parseInt(document.getElementById('priEce1Girls').value) || 0,
-      ece2_boys: parseInt(document.getElementById('priEce2Boys').value) || 0,
-      ece2_girls: parseInt(document.getElementById('priEce2Girls').value) || 0,
-      grade1_boys: parseInt(document.getElementById('priG1Boys').value) || 0,
-      grade1_girls: parseInt(document.getElementById('priG1Girls').value) || 0,
-      grade2_7_boys: parseInt(document.getElementById('priG27Boys').value) || 0,
-      grade2_7_girls: parseInt(document.getElementById('priG27Girls').value) || 0,
-      grade8_9_boys: parseInt(document.getElementById('priG89Boys').value) || 0,
-      grade8_9_girls: parseInt(document.getElementById('priG89Girls').value) || 0,
-      male_teachers: parseInt(document.getElementById('priMale').value) || 0,
-      female_teachers: parseInt(document.getElementById('priFemale').value) || 0,
-      total_teachers: parseInt(document.getElementById('priTotalTeachers').value) || 0,
-      teacher_shortfall: parseInt(document.getElementById('priTeacherShort').value) || 0,
-      comp_func: parseInt(document.getElementById('priCompFunc').value) || 0,
-      comp_dys: parseInt(document.getElementById('priCompDys').value) || 0,
-      power: document.getElementById('priPower').value,
-      water: document.getElementById('priWater').value,
-      vip_latrines: parseInt(document.getElementById('priVip').value) || 0,
-      single_vip: parseInt(document.getElementById('priSingleVip').value) || 0,
-      pit_latrines: parseInt(document.getElementById('priPit').value) || 0,
-      mobile_network: document.getElementById('priMobile').value,
-      specialization: document.getElementById('priSpecialization').value || '',
-      teacher_sample: document.getElementById('priTeacherSample').value || ''
-    };
-
     try {
-      const { error } = await supabaseClient.from('schools_data').insert([payload]);
-      if (error) {
-        if (error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-        } else {
-          throw error;
-        }
-        return;
+      // Use the database function to insert data (bypasses RLS)
+      const { data, error } = await supabaseClient.rpc('insert_primary_school_data', {
+        p_district: district,
+        p_school_name: priNameSelect.value || 'N/A',
+        p_status: document.getElementById('priStatus').value,
+        p_distance: parseFloat(document.getElementById('priDist').value) || 0,
+        p_emis: document.getElementById('priEmis').value || 'N/A',
+        p_perm_houses: parseInt(document.getElementById('priPermHouses').value) || 0,
+        p_incomp_houses: parseInt(document.getElementById('priIncompHouses').value) || 0,
+        p_temp_houses: parseInt(document.getElementById('priTempHouses').value) || 0,
+        p_perm_class: parseInt(document.getElementById('priPermClass').value) || 0,
+        p_incomp_class: parseInt(document.getElementById('priIncompClass').value) || 0,
+        p_temp_class: parseInt(document.getElementById('priTempClass').value) || 0,
+        p_desks: parseInt(document.getElementById('priDesks').value) || 0,
+        p_desk_shortfall: parseInt(document.getElementById('priDeskShort').value) || 0,
+        p_ece1_boys: parseInt(document.getElementById('priEce1Boys').value) || 0,
+        p_ece1_girls: parseInt(document.getElementById('priEce1Girls').value) || 0,
+        p_ece2_boys: parseInt(document.getElementById('priEce2Boys').value) || 0,
+        p_ece2_girls: parseInt(document.getElementById('priEce2Girls').value) || 0,
+        p_grade1_boys: parseInt(document.getElementById('priG1Boys').value) || 0,
+        p_grade1_girls: parseInt(document.getElementById('priG1Girls').value) || 0,
+        p_grade2_7_boys: parseInt(document.getElementById('priG27Boys').value) || 0,
+        p_grade2_7_girls: parseInt(document.getElementById('priG27Girls').value) || 0,
+        p_grade8_9_boys: parseInt(document.getElementById('priG89Boys').value) || 0,
+        p_grade8_9_girls: parseInt(document.getElementById('priG89Girls').value) || 0,
+        p_male_teachers: parseInt(document.getElementById('priMale').value) || 0,
+        p_female_teachers: parseInt(document.getElementById('priFemale').value) || 0,
+        p_total_teachers: parseInt(document.getElementById('priTotalTeachers').value) || 0,
+        p_teacher_shortfall: parseInt(document.getElementById('priTeacherShort').value) || 0,
+        p_comp_func: parseInt(document.getElementById('priCompFunc').value) || 0,
+        p_comp_dys: parseInt(document.getElementById('priCompDys').value) || 0,
+        p_power: document.getElementById('priPower').value,
+        p_water: document.getElementById('priWater').value,
+        p_vip_latrines: parseInt(document.getElementById('priVip').value) || 0,
+        p_single_vip: parseInt(document.getElementById('priSingleVip').value) || 0,
+        p_pit_latrines: parseInt(document.getElementById('priPit').value) || 0,
+        p_mobile_network: document.getElementById('priMobile').value,
+        p_specialization: document.getElementById('priSpecialization').value || '',
+        p_teacher_sample: document.getElementById('priTeacherSample').value || ''
+      });
+
+      if (error) throw error;
+      
+      if (data && data.success) {
+        showToast('✅ Primary school data saved');
+      } else {
+        showToast('⚠️ ' + (data?.message || 'Unknown error'));
       }
-      showToast('✅ Primary school data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
       console.error(err);
@@ -1822,7 +1803,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // SUBMIT — SECONDARY + TEACHER DATA (WITH RLS FIX)
+  // SUBMIT — SECONDARY + TEACHER DATA (Using Database Functions)
   // ============================================================
   document.getElementById('submitSecondaryComplete').addEventListener('click', async function() {
     const district = districtSelect.value;
@@ -1831,80 +1812,65 @@ button{font-family:inherit;}
     if (hasNegativeValues(secondaryTab)) { showToast('⚠️ Please check for negative values'); return; }
     if (!supabaseClient && !initSupabase()) { showToast('⚠️ Connection error'); return; }
 
-    // Set the district context for RLS
-    await setDistrictContext(district);
-
-    const secondaryPayload = {
-      district: district, 
-      school_type: 'secondary',
-      school_name: secNameSelect.value || 'N/A',
-      status: document.getElementById('secStatus').value,
-      distance: parseFloat(document.getElementById('secDist').value) || 0,
-      emis: document.getElementById('secEmis').value || 'N/A',
-      perm_houses: parseInt(document.getElementById('secPermHouses').value) || 0,
-      incomp_houses: parseInt(document.getElementById('secIncompHouses').value) || 0,
-      temp_houses: parseInt(document.getElementById('secTempHouses').value) || 0,
-      perm_class: parseInt(document.getElementById('secPermClass').value) || 0,
-      incomp_class: parseInt(document.getElementById('secIncompClass').value) || 0,
-      temp_class: parseInt(document.getElementById('secTempClass').value) || 0,
-      desks: parseInt(document.getElementById('secDesks').value) || 0,
-      desk_shortfall: parseInt(document.getElementById('secDeskShort').value) || 0,
-      form1_boys: parseInt(document.getElementById('secF1Boys').value) || 0,
-      form1_girls: parseInt(document.getElementById('secF1Girls').value) || 0,
-      grade9_boys: parseInt(document.getElementById('secG9Boys').value) || 0,
-      grade9_girls: parseInt(document.getElementById('secG9Girls').value) || 0,
-      grade10_12_boys: parseInt(document.getElementById('secG1012Boys').value) || 0,
-      grade10_12_girls: parseInt(document.getElementById('secG1012Girls').value) || 0,
-      male_teachers: parseInt(document.getElementById('secMale').value) || 0,
-      female_teachers: parseInt(document.getElementById('secFemale').value) || 0,
-      total_teachers: parseInt(document.getElementById('secTotalTeachers').value) || 0,
-      teacher_shortfall: parseInt(document.getElementById('secTeacherShort').value) || 0,
-      comp_func: parseInt(document.getElementById('secCompFunc').value) || 0,
-      comp_dys: parseInt(document.getElementById('secCompDys').value) || 0,
-      water: document.getElementById('secWater').value,
-      vip_latrines: parseInt(document.getElementById('secVip').value) || 0,
-      single_vip: parseInt(document.getElementById('secSingleVip').value) || 0,
-      pit_latrines: parseInt(document.getElementById('secPit').value) || 0,
-      mobile_network: document.getElementById('secMobile').value,
-      teacher_sample: document.getElementById('secTeacherSample').value || ''
-    };
-
-    const teacherPayload = {
-      district: partBDistrictSelect.value || district,
-      school_type: 'teacher_subject',
-      school_name: teacherSchoolSelect.value || secNameSelect.value || 'N/A'
-    };
-    SUBJECTS.forEach(s => {
-      teacherPayload['t_'+s.key+'_req'] = parseInt(document.getElementById('t_'+s.key+'_req').value) || 0;
-      teacherPayload['t_'+s.key+'_avail'] = parseInt(document.getElementById('t_'+s.key+'_avail').value) || 0;
-      teacherPayload['t_'+s.key+'_short'] = parseInt(document.getElementById('t_'+s.key+'_short').value) || 0;
-    });
-
     try {
-      // Set context for teacher payload if different district
-      if (teacherPayload.district !== district) {
-        await setDistrictContext(teacherPayload.district);
-      }
+      // Submit secondary data using database function
+      const secondaryResult = await supabaseClient.rpc('insert_secondary_school_data', {
+        p_district: district,
+        p_school_name: secNameSelect.value || 'N/A',
+        p_status: document.getElementById('secStatus').value,
+        p_distance: parseFloat(document.getElementById('secDist').value) || 0,
+        p_emis: document.getElementById('secEmis').value || 'N/A',
+        p_perm_houses: parseInt(document.getElementById('secPermHouses').value) || 0,
+        p_incomp_houses: parseInt(document.getElementById('secIncompHouses').value) || 0,
+        p_temp_houses: parseInt(document.getElementById('secTempHouses').value) || 0,
+        p_perm_class: parseInt(document.getElementById('secPermClass').value) || 0,
+        p_incomp_class: parseInt(document.getElementById('secIncompClass').value) || 0,
+        p_temp_class: parseInt(document.getElementById('secTempClass').value) || 0,
+        p_desks: parseInt(document.getElementById('secDesks').value) || 0,
+        p_desk_shortfall: parseInt(document.getElementById('secDeskShort').value) || 0,
+        p_form1_boys: parseInt(document.getElementById('secF1Boys').value) || 0,
+        p_form1_girls: parseInt(document.getElementById('secF1Girls').value) || 0,
+        p_grade9_boys: parseInt(document.getElementById('secG9Boys').value) || 0,
+        p_grade9_girls: parseInt(document.getElementById('secG9Girls').value) || 0,
+        p_grade10_12_boys: parseInt(document.getElementById('secG1012Boys').value) || 0,
+        p_grade10_12_girls: parseInt(document.getElementById('secG1012Girls').value) || 0,
+        p_male_teachers: parseInt(document.getElementById('secMale').value) || 0,
+        p_female_teachers: parseInt(document.getElementById('secFemale').value) || 0,
+        p_total_teachers: parseInt(document.getElementById('secTotalTeachers').value) || 0,
+        p_teacher_shortfall: parseInt(document.getElementById('secTeacherShort').value) || 0,
+        p_comp_func: parseInt(document.getElementById('secCompFunc').value) || 0,
+        p_comp_dys: parseInt(document.getElementById('secCompDys').value) || 0,
+        p_water: document.getElementById('secWater').value,
+        p_vip_latrines: parseInt(document.getElementById('secVip').value) || 0,
+        p_single_vip: parseInt(document.getElementById('secSingleVip').value) || 0,
+        p_pit_latrines: parseInt(document.getElementById('secPit').value) || 0,
+        p_mobile_network: document.getElementById('secMobile').value,
+        p_teacher_sample: document.getElementById('secTeacherSample').value || ''
+      });
 
-      const [secondaryResult, teacherResult] = await Promise.all([
-        supabaseClient.from('schools_data').insert([secondaryPayload]),
-        supabaseClient.from('schools_data').insert([teacherPayload])
-      ]);
+      if (secondaryResult.error) throw secondaryResult.error;
+
+      // Prepare teacher subject data
+      const teacherDistrict = partBDistrictSelect.value || district;
+      const teacherSchool = teacherSchoolSelect.value || secNameSelect.value || 'N/A';
+
+      // Build teacher subject payload
+      const teacherParams = {
+        p_district: teacherDistrict,
+        p_school_name: teacherSchool
+      };
       
-      if (secondaryResult.error) {
-        if (secondaryResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw secondaryResult.error;
-      }
-      if (teacherResult.error) {
-        if (teacherResult.error.message.includes('row-level security')) {
-          showToast('⚠️ RLS error: Please ensure you are signed in as an admin for this district');
-          return;
-        }
-        throw teacherResult.error;
-      }
+      SUBJECTS.forEach(s => {
+        teacherParams['p_' + s.key + '_req'] = parseInt(document.getElementById('t_' + s.key + '_req').value) || 0;
+        teacherParams['p_' + s.key + '_avail'] = parseInt(document.getElementById('t_' + s.key + '_avail').value) || 0;
+        teacherParams['p_' + s.key + '_short'] = parseInt(document.getElementById('t_' + s.key + '_short').value) || 0;
+      });
+
+      // Submit teacher subject data
+      const teacherResult = await supabaseClient.rpc('insert_teacher_subject_data', teacherParams);
+
+      if (teacherResult.error) throw teacherResult.error;
+
       showToast('✅ Secondary and teacher data saved');
     } catch (err) {
       showToast('❌ Error: ' + err.message);
