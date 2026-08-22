@@ -361,7 +361,17 @@ button{font-family:inherit;}
 .admin-item .school-type{font-size:10.5px;padding:3px 10px;border-radius:40px;font-weight:600;white-space:nowrap;flex-shrink:0;}
 .admin-item .details{font-size:11.5px;color:var(--ink-soft);margin-top:9px;display:grid;grid-template-columns:1fr 1fr;gap:5px;font-family:var(--font-mono);}
 .admin-item .timestamp{font-size:10px;color:var(--ink-faint);margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;align-items:center;}
-.delete-btn{background:var(--oxblood-tint);color:var(--oxblood);border:1px solid #E3C4C4;border-radius:40px;padding:5px 13px;font-size:11px;cursor:pointer;font-weight:600;}
+.delete-btn{
+  background:var(--oxblood-tint);
+  color:var(--oxblood);
+  border:1px solid #E3C4C4;
+  border-radius:40px;
+  padding:5px 13px;
+  font-size:11px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.2s ease;
+}
 .delete-btn:hover{background:var(--oxblood);color:#fff;}
 .delete-btn:disabled{opacity:0.6;cursor:not-allowed;}
 
@@ -1311,25 +1321,10 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // DELETE — FIXED (Using event delegation)
+  // DELETE — FIXED (Using event delegation with proper binding)
   // ============================================================
-  // Use event delegation on the admin list container
-  document.getElementById('adminList').addEventListener('click', function(e) {
-    const deleteBtn = e.target.closest('.delete-btn');
-    if (!deleteBtn) return;
-    
-    const item = deleteBtn.closest('.admin-item');
-    if (!item) return;
-    
-    const id = parseInt(item.dataset.id);
-    if (!id) return;
-    
-    // Call the delete function
-    deleteRecord(id);
-  });
-
-  // The actual delete function
-  async function deleteRecord(id) {
+  // The delete function (exposed globally)
+  window.deleteRecord = async function(id) {
     if (!isLoggedIn) { 
         showToast('🔒 Please sign in first'); 
         return; 
@@ -1376,9 +1371,7 @@ button{font-family:inherit;}
         showToast('❌ Error: ' + err.message);
         console.error(err);
     }
-  }
-  // Make deleteRecord available globally
-  window.deleteRecord = deleteRecord;
+  };
 
   // ============================================================
   // LOAD ADMIN DATA
@@ -1441,7 +1434,7 @@ button{font-family:inherit;}
           '<span class="school-type" style="background:' + typeColor + '20;color:' + typeColor + ';">' + typeLabel + '</span></div>' +
           '<div class="details">' + details + '</div>' +
           '<div class="timestamp"><span><i class="far fa-calendar-alt"></i> ' + (row.created_at ? new Date(row.created_at).toLocaleString() : '') + '</span>' +
-          '<button class="delete-btn" data-id="' + row.id + '"><i class="fas fa-trash"></i> Delete</button></div></div>';
+          '<button class="delete-btn" onclick="window.deleteRecord(' + row.id + ')"><i class="fas fa-trash"></i> Delete</button></div></div>';
       });
       adminList.innerHTML = html;
     } catch (err) {
@@ -1604,7 +1597,7 @@ button{font-family:inherit;}
   });
 
   // ============================================================
-  // EXCEL EXPORT — FIXED
+  // EXCEL EXPORT
   // ============================================================
   exportExcelBtn.addEventListener('click', async function() {
     if (!isLoggedIn || !loggedInDistrict) { 
